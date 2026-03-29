@@ -61,15 +61,14 @@ async function signup() {
   btn.disabled = false; btn.textContent = 'Create Account';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('[data-tab]').forEach(btn => {
-    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-  });
-  document.getElementById('loginBtn').addEventListener('click', login);
-  document.getElementById('signupBtn').addEventListener('click', signup);
-  document.addEventListener('keydown', e => {
-    if (e.key !== 'Enter') return;
-    if (document.getElementById('loginForm').style.display !== 'none') login();
-    else signup();
-  });
+// Wire up buttons — DOM is ready since script is at end of body
+document.querySelectorAll('[data-tab]').forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+document.getElementById('loginBtn').addEventListener('click', login);
+document.getElementById('signupBtn').addEventListener('click', signup);
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  if (document.getElementById('loginForm').style.display !== 'none') login();
+  else signup();
 });
