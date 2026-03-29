@@ -6,6 +6,7 @@
 <title>CoastiesBinder — My Binders</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -840,8 +841,10 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;over
       <a href="#">Shop ↗</a>
     </div>
     <div class="nav-right">
-      <a href="#" class="btn-ghost">Log in</a>
-      <a href="#" class="btn-violet">Get started</a>
+      <a href="coasties-binder-auth.html" class="btn-ghost" id="navLogin">Log in</a>
+      <a href="coasties-binder-auth.html" class="btn-violet" id="navSignup">Get started</a>
+      <button class="btn-ghost" id="navSignout" style="display:none" onclick="signOut()">Sign out</button>
+      <div id="navUser" style="display:none;font-size:12px;color:var(--text2);padding:6px 10px;background:rgba(255,255,255,0.05);border-radius:7px;border:1px solid var(--border)"></div>
       <a href="https://coastiescollectibles.com" class="nav-icon" title="Shop">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
       </a>
@@ -1099,14 +1102,13 @@ const SETS = [
 function logoUrl(set){ return `https://assets.tcgdex.net/en/${set.serie}/${set.id}/logo.webp` }
 function symbolUrl(set){ return `https://assets.tcgdex.net/univ/${set.serie}/${set.id}/symbol.webp` }
 
-// Mock binders — varied completion
-let binders = [
-  { id:1, name:'Destined Rivals',       setId:'sv10',   owned:187, updated:'2h ago',     fav:true  },
-  { id:2, name:'Prismatic Evolutions',  setId:'sv08.5', owned:156, updated:'Yesterday',  fav:false },
-  { id:3, name:'Mega Evolution',        setId:'me01',   owned:188, updated:'3 days ago', fav:false },
-  { id:4, name:'Paradox Rift',          setId:'sv04',   owned:168, updated:'1 week ago', fav:true  },
-  { id:5, name:'Stellar Crown',         setId:'sv07',   owned:42,  updated:'2 weeks ago',fav:false },
-];
+// ── Supabase ──
+const SUPA_URL = 'https://czkzlkfnwsvsfpxjpscs.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6a3psa2Zud3N2c2ZweGpwc2NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3ODA3OTEsImV4cCI6MjA5MDM1Njc5MX0.PJqknz3zikYq65y0ekb1EFmDwda8DRU8SUFSK3c_yDU';
+const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+let currentUser = null;
+
+let binders = [];
 
 let sortMode = 'recent';
 let selectedSet = null;
@@ -1274,13 +1276,15 @@ function renderBinders(){
   updateStats();
 }
 
-function toggleFav(id){
-  id = Number(id);
+async function toggleFav(id){
   const b = binders.find(x => x.id === id);
   if(!b) return;
   b.fav = !b.fav;
   renderBinders();
   showToast(b.fav ? '⭐ Added to favourites' : 'Removed from favourites', b.fav ? 'a' : 'r');
+  if(currentUser){
+    await sb.from('binders').update({ fav: b.fav }).eq('id', id);
+  }
 }
 
 function setView(mode, btn){
@@ -1388,7 +1392,7 @@ function selectSet(id, el){
   if(!input.value){ input.value = SETS.find(s=>s.id===id)?.name || ''; }
 }
 
-function createBinder(){
+async function createBinder(){
   const name = document.getElementById('binderNameInput').value.trim();
   if(!name){ document.getElementById('binderNameInput').focus(); return; }
   if(!selectedSet){ showToast('Please select a set', 'r'); return; }
@@ -1398,14 +1402,25 @@ function createBinder(){
     showToast(`You already have a ${set.name} binder`, 'r');
     return;
   }
-  binders.unshift({ id: Date.now(), name, setId: selectedSet, owned: 0, updated: 'Just now', fav: false });
+  if(!currentUser){
+    // Not logged in — redirect to auth
+    window.location.href = 'coasties-binder-auth.html';
+    return;
+  }
+  const { data, error } = await sb.from('binders').insert({
+    user_id: currentUser.id,
+    name,
+    set_id: selectedSet,
+    fav: false
+  }).select().single();
+  if(error){ showToast('Failed to create binder', 'r'); console.error(error); return; }
+  binders.unshift({ id: data.id, name, setId: selectedSet, owned: 0, updated: 'Just now', fav: false });
   closeModal();
   renderBinders();
   showToast(`"${name}" binder created!`, 'a');
 }
 
-function deleteBinder(id){
-  id = Number(id);
+async function deleteBinder(id){
   const card = document.querySelector(`.binder-card[data-id="${id}"]`);
   if(!card) return;
   if(card.classList.contains('confirm-delete')){
@@ -1413,6 +1428,9 @@ function deleteBinder(id){
     binders = binders.filter(x => x.id !== id);
     renderBinders();
     showToast(`"${b.name}" deleted`, 'r');
+    if(currentUser){
+      await sb.from('binders').delete().eq('id', id);
+    }
     return;
   }
   card.classList.add('confirm-delete');
@@ -1507,8 +1525,77 @@ function showToast(msg, type){
   toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-// Init
-renderBinders();
+// ── Supabase Init ──
+async function loadBinders() {
+  if (!currentUser) { renderBinders(); return; }
+  const { data, error } = await sb
+    .from('binders')
+    .select('*, owned_cards(count)')
+    .eq('user_id', currentUser.id)
+    .order('updated_at', { ascending: false });
+  if (error) { console.error(error); renderBinders(); return; }
+  binders = data.map(b => ({
+    id: b.id,
+    name: b.name,
+    setId: b.set_id,
+    fav: b.fav,
+    owned: b.owned_cards?.[0]?.count || 0,
+    updated: timeAgo(b.updated_at)
+  }));
+  renderBinders();
+}
+
+function timeAgo(ts) {
+  const diff = Date.now() - new Date(ts).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 2) return 'Just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d ago`;
+  return new Date(ts).toLocaleDateString();
+}
+
+function updateNavAuth(user) {
+  const login = document.getElementById('navLogin');
+  const signup = document.getElementById('navSignup');
+  const signout = document.getElementById('navSignout');
+  const navUser = document.getElementById('navUser');
+  if (user) {
+    if (login) login.style.display = 'none';
+    if (signup) signup.style.display = 'none';
+    if (signout) signout.style.display = '';
+    if (navUser) { navUser.style.display = ''; navUser.textContent = user.email.split('@')[0]; }
+  } else {
+    if (login) login.style.display = '';
+    if (signup) signup.style.display = '';
+    if (signout) signout.style.display = 'none';
+    if (navUser) navUser.style.display = 'none';
+  }
+}
+
+async function signOut() {
+  await sb.auth.signOut();
+  currentUser = null;
+  binders = [];
+  updateNavAuth(null);
+  renderBinders();
+}
+
+// Boot
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  currentUser = session?.user || null;
+  updateNavAuth(currentUser);
+  await loadBinders();
+})();
+
+sb.auth.onAuthStateChange((_event, session) => {
+  currentUser = session?.user || null;
+  updateNavAuth(currentUser);
+  loadBinders();
+});
 </script>
 </body>
 </html>
