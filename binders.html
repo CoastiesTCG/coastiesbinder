@@ -1586,6 +1586,10 @@ async function signOut() {
 // Boot
 (async () => {
   const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    window.location.href = 'login.html';
+    return;
+  }
   currentUser = session?.user || null;
   updateNavAuth(currentUser);
   await loadBinders();
