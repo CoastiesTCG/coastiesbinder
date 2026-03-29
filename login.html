@@ -62,8 +62,8 @@
   <p class="subtitle" id="formSubtitle">Sign in to access your binders</p>
 
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('login')">Sign In</button>
-    <button class="tab" onclick="switchTab('signup')">Sign Up</button>
+    <button class="tab active" data-tab="login">Sign In</button>
+    <button class="tab" data-tab="signup">Sign Up</button>
   </div>
 
   <div class="error" id="errorMsg"></div>
@@ -79,7 +79,7 @@
       <label>Password</label>
       <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
     </div>
-    <button class="btn" onclick="login()" id="loginBtn">Sign In</button>
+    <button class="btn" id="loginBtn">Sign In</button>
   </div>
 
   <!-- Signup form -->
@@ -96,13 +96,27 @@
       <label>Confirm Password</label>
       <input type="password" id="signupConfirm" placeholder="••••••••" autocomplete="new-password">
     </div>
-    <button class="btn" onclick="signup()" id="signupBtn">Create Account</button>
+    <button class="btn" id="signupBtn">Create Account</button>
   </div>
 
   <a href="index.html" class="back-link">← Back to CoastiesBinder</a>
 </div>
 
 <script>
+// Wire up event listeners (avoids CSP issues with inline onclick)
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+  document.getElementById('loginBtn').addEventListener('click', login);
+  document.getElementById('signupBtn').addEventListener('click', signup);
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    if (document.getElementById('loginForm').style.display !== 'none') login();
+    else signup();
+  });
+});
+
 const SUPA_URL = 'https://czkzlkfnwsvsfpxjpscs.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6a3psa2Zud3N2c2ZweGpwc2NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3ODA3OTEsImV4cCI6MjA5MDM1Njc5MX0.PJqknz3zikYq65y0ekb1EFmDwda8DRU8SUFSK3c_yDU';
 const supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
@@ -167,13 +181,7 @@ async function signup() {
   btn.disabled = false; btn.textContent = 'Create Account';
 }
 
-// Allow Enter key
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    if (document.getElementById('loginForm').style.display !== 'none') login();
-    else signup();
-  }
-});
+
 </script>
 </body>
 </html>
