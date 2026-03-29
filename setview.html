@@ -1006,22 +1006,22 @@ async function markAllOwned() {
     return;
   }
   currentUser = session.user;
-  document.body.style.opacity = '1';
 
   // Find this user's binder for this set
-  const { data: binders } = await sb
+  const { data: binderData } = await sb
     .from('binders')
     .select('id')
     .eq('user_id', currentUser.id)
     .eq('set_id', SET_ID)
-    .single();
+    .maybeSingle();
 
-  if (binders) {
-    currentBinderId = binders.id;
+  if (binderData) {
+    currentBinderId = binderData.id;
     await loadOwnedCards();
   }
 
-  init();
+  await init();
+  document.body.style.opacity = '1';
 })();
 
 // Wire mark all button to Supabase version

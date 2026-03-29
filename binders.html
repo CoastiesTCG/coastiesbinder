@@ -843,7 +843,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;over
     <div class="nav-right">
       <a href="coasties-binder-auth.html" class="btn-ghost" id="navLogin">Log in</a>
       <a href="coasties-binder-auth.html" class="btn-violet" id="navSignup">Get started</a>
-      <button class="btn-ghost" id="navSignout" style="display:none" onclick="signOut()">Sign out</button>
+      <button class="btn-ghost" id="navSignout" style="display:none">Sign out</button>
       <div id="navUser" style="display:none;font-size:12px;color:var(--text2);padding:6px 10px;background:rgba(255,255,255,0.05);border-radius:7px;border:1px solid var(--border)"></div>
       <a href="https://coastiescollectibles.com" class="nav-icon" title="Shop">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
@@ -1277,7 +1277,7 @@ function renderBinders(){
 }
 
 async function toggleFav(id){
-  const b = binders.find(x => x.id === id);
+  const b = binders.find(x => String(x.id) === String(id));
   if(!b) return;
   b.fav = !b.fav;
   renderBinders();
@@ -1424,7 +1424,7 @@ async function deleteBinder(id){
   const card = document.querySelector(`.binder-card[data-id="${id}"]`);
   if(!card) return;
   if(card.classList.contains('confirm-delete')){
-    const b = binders.find(x => x.id === id);
+    const b = binders.find(x => String(x.id) === String(id));
     binders = binders.filter(x => x.id !== id);
     renderBinders();
     showToast(`"${b.name}" deleted`, 'r');
@@ -1446,7 +1446,6 @@ async function deleteBinder(id){
 }
 
 function cancelDelete(id){
-  id = Number(id);
   const card = document.querySelector(`.binder-card[data-id="${id}"]`);
   if(!card) return;
   card.classList.remove('confirm-delete');
@@ -1455,8 +1454,7 @@ function cancelDelete(id){
 
 let renameTargetId = null;
 function renameBinder(id){
-  id = Number(id);
-  const b = binders.find(x => x.id === id);
+  const b = binders.find(x => String(x.id) === String(id));
   if(!b) return;
   renameTargetId = id;
   document.getElementById('renameInput').value = b.name;
@@ -1466,13 +1464,16 @@ function renameBinder(id){
 function closeRename(){ document.getElementById('renameBackdrop').classList.remove('open'); renameTargetId = null; }
 function closeRenameOutside(e){ if(e.target === document.getElementById('renameBackdrop')) closeRename(); }
 function confirmRename(){
-  const b = binders.find(x => x.id === renameTargetId);
+  const b = binders.find(x => String(x.id) === String(renameTargetId));
   const newName = document.getElementById('renameInput').value.trim();
   if(!b || !newName) return;
   b.name = newName;
   closeRename();
   renderBinders();
   showToast('Binder renamed', 'a');
+  if(currentUser){
+    sb.from('binders').update({ name: newName }).eq('id', renameTargetId);
+  }
 }
 document.getElementById('renameInput').addEventListener('keydown', e => { if(e.key==='Enter') confirmRename(); if(e.key==='Escape') closeRename(); });
 
@@ -1582,6 +1583,9 @@ async function signOut() {
   updateNavAuth(null);
   renderBinders();
 }
+
+// Wire signout button
+document.getElementById('navSignout').addEventListener('click', signOut);
 
 // Boot
 (async () => {

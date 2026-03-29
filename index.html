@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CoastiesBinder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -366,5 +367,26 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;over
 
 <div class="placeholder">// more sections incoming</div>
 
+
+<script>
+const SUPA_URL = 'https://czkzlkfnwsvsfpxjpscs.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6a3psa2Zud3N2c2ZweGpwc2NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3ODA3OTEsImV4cCI6MjA5MDM1Njc5MX0.PJqknz3zikYq65y0ekb1EFmDwda8DRU8SUFSK3c_yDU';
+const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  const user = session?.user || null;
+  const login = document.getElementById('navLogin');
+  const signup = document.getElementById('navSignup');
+  const signout = document.getElementById('navSignout');
+  const navUser = document.getElementById('navUser');
+  if (user) {
+    if (login) login.style.display = 'none';
+    if (signup) signup.style.display = 'none';
+    if (signout) { signout.style.display = ''; signout.addEventListener('click', async () => { await sb.auth.signOut(); window.location.reload(); }); }
+    if (navUser) { navUser.style.display = ''; navUser.textContent = user.email.split('@')[0]; }
+  }
+})();
+</script>
 </body>
 </html>
