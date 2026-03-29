@@ -48,7 +48,7 @@
 </head>
 <body>
 <div class="card">
-  <a href="coasties-binder-index.html" class="logo">
+  <a href="index.html" class="logo">
     <div class="logo-mark">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
     </div>
@@ -99,7 +99,7 @@
     <button class="btn" onclick="signup()" id="signupBtn">Create Account</button>
   </div>
 
-  <a href="coasties-binder-index.html" class="back-link">← Back to CoastiesBinder</a>
+  <a href="index.html" class="back-link">← Back to CoastiesBinder</a>
 </div>
 
 <script>
@@ -109,7 +109,7 @@ const supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
 // Redirect if already logged in
 supabase.auth.getSession().then(({ data }) => {
-  if (data.session) window.location.href = 'coasties-binder-mybinders.html';
+  if (data.session) window.location.href = 'binders.html';
 });
 
 function switchTab(tab) {
@@ -149,7 +149,7 @@ async function login() {
   btn.disabled = true; btn.textContent = 'Signing in...';
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) { showError(error.message); btn.disabled = false; btn.textContent = 'Sign In'; return; }
-  window.location.href = 'coasties-binder-mybinders.html';
+  window.location.href = 'binders.html';
 }
 
 async function signup() {
