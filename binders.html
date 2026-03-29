@@ -841,8 +841,8 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;over
       <a href="#">Shop ↗</a>
     </div>
     <div class="nav-right">
-      <a href="auth.html" class="btn-ghost" id="navLogin">Log in</a>
-      <a href="auth.html" class="btn-violet" id="navSignup">Get started</a>
+      <a href="login.html" class="btn-ghost" id="navLogin">Log in</a>
+      <a href="login.html" class="btn-violet" id="navSignup">Get started</a>
       <button class="btn-ghost" id="navSignout" style="display:none" onclick="signOut()">Sign out</button>
       <div id="navUser" style="display:none;font-size:12px;color:var(--text2);padding:6px 10px;background:rgba(255,255,255,0.05);border-radius:7px;border:1px solid var(--border)"></div>
       <a href="https://coastiescollectibles.com" class="nav-icon" title="Shop">
@@ -1404,7 +1404,7 @@ async function createBinder(){
   }
   if(!currentUser){
     // Not logged in — redirect to auth
-    window.location.href = 'auth.html';
+    window.location.href = 'login.html';
     return;
   }
   const { data, error } = await sb.from('binders').insert({
