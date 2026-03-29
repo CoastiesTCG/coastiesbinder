@@ -39,16 +39,26 @@ async function login() {
 }
 
 async function signup() {
+  const username = document.getElementById('signupUsername').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
   const email    = document.getElementById('signupEmail').value.trim();
   const password = document.getElementById('signupPassword').value;
   const confirm  = document.getElementById('signupConfirm').value;
+  if (!username) { showError('Please choose a username'); return; }
+  if (username.length < 3) { showError('Username must be at least 3 characters'); return; }
   if (!email || !password || !confirm) { showError('Please fill in all fields'); return; }
   if (password.length < 8) { showError('Password must be at least 8 characters'); return; }
   if (password !== confirm) { showError('Passwords do not match'); return; }
   const btn = document.getElementById('signupBtn');
   btn.disabled = true; btn.textContent = 'Creating account...';
-  const { error } = await sb.auth.signUp({ email, password });
+  // Check username not taken
+  const { data: existing } = await sb.from('profiles').select('id').eq('username', username).maybeSingle();
+  if (existing) { showError('Username already taken'); btn.disabled = false; btn.textContent = 'Create Account'; return; }
+  const { data, error } = await sb.auth.signUp({ email, password });
   if (error) { showError(error.message); btn.disabled = false; btn.textContent = 'Create Account'; return; }
+  // Create profile
+  if (data.user) {
+    await sb.from('profiles').insert({ id: data.user.id, username });
+  }
   showSuccess('Account created! Check your email to confirm, then sign in.');
   btn.disabled = false; btn.textContent = 'Create Account';
 }

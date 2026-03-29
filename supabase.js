@@ -59,6 +59,11 @@ window._sbReady = (async () => {
     return null;
   }
 
+  // Fetch username from profiles
+  if (user) {
+    const { data: profile } = await sb.from('profiles').select('username').eq('id', user.id).maybeSingle();
+    user._username = profile?.username || user.email.split('@')[0];
+  }
   updateNav(user);
   return user;
 })();
