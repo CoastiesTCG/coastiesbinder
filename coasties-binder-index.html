@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoastiesBinder — Concept F</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#020209;--surface:#080818;--surface2:#0d0c22;
+  --border:#141230;--border2:#1e1c40;
+  --violet:#7c3aed;--violet2:#6d28d9;--violet-hi:#8b5cf6;
+  --lavender:#c4b5fd;--lavender2:#a78bfa;
+  --pink:#ec4899;--green:#34d399;--amber:#f59e0b;--cyan:#22d3ee;
+  --text:#ddd8f8;--text2:#9d96cc;--muted:#3a3660;
+  --trans:0.15s ease;
+  --neon-v:rgba(139,92,246,0.8);
+  --neon-p:rgba(236,72,153,0.8);
+  --neon-c:rgba(34,211,238,0.8);
+}
+html{scroll-behavior:smooth;scrollbar-gutter:stable}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden;min-height:100dvh}
+
+/* Grid floor perspective */
+.grid-floor{
+  position:fixed;bottom:0;left:0;right:0;height:55vh;
+  pointer-events:none;z-index:0;overflow:hidden;
+}
+.grid-floor::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(124,58,237,0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,58,237,0.18) 1px, transparent 1px);
+  background-size:50px 50px;
+  transform:perspective(350px) rotateX(65deg) scale(2.2);
+  transform-origin:bottom center;
+  mask-image:linear-gradient(to bottom, transparent 0%, black 50%);
+}
+.grid-floor::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent 0%,var(--neon-v) 20%,var(--neon-p) 40%,var(--neon-c) 60%,var(--neon-v) 80%,transparent 100%);
+  box-shadow:0 0 24px 3px rgba(139,92,246,0.5),0 0 60px 8px rgba(124,58,237,0.25),0 0 100px 16px rgba(124,58,237,0.1);
+}
+
+/* ── NAV ── */
+.nav{
+  height:80px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  background:rgba(2,2,9,0.95);
+  backdrop-filter:blur(24px);
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;
+}
+/* Everything sits inside this centred container */
+.nav-inner{
+  display:flex;align-items:center;
+  width:100%;max-width:1280px;
+  padding:0 32px;gap:0;
+}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;margin-right:20px}
+.logo-mark{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--violet),var(--violet2));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(124,58,237,0.4)}
+.logo-divider{width:1px;height:26px;background:rgba(255,255,255,0.1);flex-shrink:0;margin:0 4px}
+.logo-text{display:flex;flex-direction:column;line-height:1;gap:2px}
+.logo-title{font-family:'Bebas Neue',sans-serif;font-size:16px;font-weight:400;color:#fff;letter-spacing:0.04em}
+.logo-sub{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase}
+/* Search takes remaining space */
+.nav-search{
+  flex:1;
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:8px;padding:0 14px;height:36px;
+  transition:border-color var(--trans);
+  margin-right:20px;
+}
+.nav-search:focus-within{border-color:rgba(124,58,237,0.4)}
+.nav-search svg{color:var(--muted);flex-shrink:0}
+.nav-search input{background:none;border:none;outline:none;font-family:'Outfit',sans-serif;font-size:13px;color:var(--text);width:100%}
+.nav-search input::placeholder{color:var(--muted)}
+/* Nav links */
+.nav-links{display:flex;gap:2px;flex-shrink:0;margin-right:16px}
+.nav-links a{font-size:12px;color:var(--muted);text-decoration:none;font-weight:500;padding:5px 10px;border-radius:6px;transition:all var(--trans);white-space:nowrap}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+.nav-links a.active{color:var(--lavender);background:rgba(124,58,237,0.08)}
+/* Right actions */
+.nav-right{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.08);color:var(--text2);padding:6px 12px;border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit;transition:all var(--trans);font-weight:500;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.18);color:var(--text)}
+.btn-violet{background:linear-gradient(135deg,var(--violet),var(--violet2));color:#fff;padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;box-shadow:0 2px 12px rgba(124,58,237,0.35);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn-violet:hover{box-shadow:0 4px 20px rgba(124,58,237,0.5);transform:translateY(-1px)}
+.nav-icon{width:34px;height:34px;border-radius:7px;border:1px solid rgba(255,255,255,0.08);background:transparent;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all var(--trans);text-decoration:none;flex-shrink:0}
+.nav-icon:hover{border-color:rgba(255,255,255,0.18);color:var(--text)}
+
+/* HERO */
+.hero{
+  min-height:calc(100dvh - 80px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:80px 32px 120px;
+  position:relative;z-index:1;text-align:center;
+  overflow:hidden;
+}
+.hero-inner-wrap{
+  width:100%;max-width:1280px;margin:0 auto;
+  display:flex;flex-direction:column;align-items:center;
+}
+
+/* Glowing orb */
+.orb{
+  position:absolute;top:10%;left:50%;transform:translateX(-50%);
+  width:600px;height:400px;
+  background:radial-gradient(ellipse,rgba(124,58,237,0.15) 0%,transparent 65%);
+  filter:blur(60px);pointer-events:none;
+}
+
+/* Vertical neon lines flanking */
+.vline{
+  position:absolute;top:0;bottom:0;width:1px;pointer-events:none;
+  background:linear-gradient(180deg,transparent 0%,rgba(124,58,237,0.3) 20%,rgba(139,92,246,0.5) 50%,rgba(124,58,237,0.3) 80%,transparent 100%);
+}
+.vline-l{left:10%}
+.vline-r{right:10%}
+.vline::after{
+  content:'';position:absolute;top:50%;width:4px;height:20px;
+  left:-1.5px;transform:translateY(-50%);
+  background:var(--violet-hi);border-radius:2px;
+  box-shadow:0 0 12px 4px rgba(139,92,246,0.5);
+  animation:pulse-line 2s ease-in-out infinite;
+}
+.vline-r::after{animation-delay:1s}
+@keyframes pulse-line{0%,100%{opacity:0.4;transform:translateY(-50%) scaleY(0.8)}50%{opacity:1;transform:translateY(-50%) scaleY(1.2)}}
+
+/* Number counter going up */
+.hero-counter{
+  font-family:'Space Mono',monospace;font-size:11px;font-weight:700;
+  color:var(--violet-hi);letter-spacing:0.2em;text-transform:uppercase;
+  margin-bottom:24px;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  animation:fade-up 0.4s ease both;
+}
+.hc-bracket{opacity:0.4}
+
+/* MASSIVE glitch title */
+.hero-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(80px,13vw,160px);
+  line-height:0.85;letter-spacing:0.02em;
+  margin-bottom:20px;
+  position:relative;
+  animation:fade-up 0.4s 0.08s ease both;
+}
+.hero-title-main{
+  color:#fff;display:block;
+  text-shadow:0 0 60px rgba(139,92,246,0.3);
+}
+.hero-title-accent{
+  display:block;
+  background:linear-gradient(135deg,var(--cyan) 0%,var(--violet-hi) 40%,var(--pink) 80%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(139,92,246,0.5));
+  position:relative;
+}
+/* Glitch effect */
+.hero-title-accent::before,.hero-title-accent::after{
+  content:attr(data-text);
+  position:absolute;top:0;left:0;right:0;
+  background:linear-gradient(135deg,var(--cyan) 0%,var(--violet-hi) 40%,var(--pink) 80%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-title-accent::before{
+  animation:glitch-1 4s infinite;clip-path:polygon(0 20%,100% 20%,100% 40%,0 40%);
+  transform:translate(-2px,0);color:var(--cyan);
+}
+.hero-title-accent::after{
+  animation:glitch-2 4s infinite;clip-path:polygon(0 60%,100% 60%,100% 75%,0 75%);
+  transform:translate(2px,0);color:var(--pink);
+}
+@keyframes glitch-1{0%,85%,100%{opacity:0;transform:translate(0)}86%{opacity:0.8;transform:translate(-3px,-1px)}90%{opacity:0;transform:translate(0)}}
+@keyframes glitch-2{0%,88%,100%{opacity:0;transform:translate(0)}89%{opacity:0.6;transform:translate(3px,1px)}93%{opacity:0;transform:translate(0)}}
+
+.hero-sub{
+  font-size:16px;color:var(--text2);line-height:1.7;max-width:560px;
+  margin:0 auto 48px;font-weight:300;
+  animation:fade-up 0.4s 0.16s ease both;
+}
+
+/* CTA row */
+.hero-cta{
+  display:flex;gap:14px;justify-content:center;align-items:center;margin-bottom:64px;
+  animation:fade-up 0.4s 0.24s ease both;
+}
+.cta-main{
+  padding:14px 36px;font-size:15px;font-weight:700;
+  background:linear-gradient(135deg,var(--violet),var(--violet2));
+  color:#fff;border:1px solid var(--violet-hi);border-radius:8px;text-decoration:none;
+  box-shadow:0 0 0 1px rgba(139,92,246,0.2),0 8px 32px rgba(124,58,237,0.35),0 0 60px rgba(124,58,237,0.1);
+  transition:all 0.25s;font-family:inherit;display:inline-flex;align-items:center;gap:10px;
+}
+.cta-main:hover{
+  box-shadow:0 0 0 1px rgba(139,92,246,0.5),0 8px 40px rgba(124,58,237,0.5),0 0 80px rgba(124,58,237,0.2);
+  transform:translateY(-2px);
+}
+.cta-ghost{
+  padding:14px 28px;font-size:14px;font-weight:600;
+  background:transparent;color:var(--text2);
+  border:1px solid rgba(255,255,255,0.1);border-radius:8px;text-decoration:none;
+  transition:all 0.2s;font-family:inherit;
+}
+.cta-ghost:hover{background:rgba(255,255,255,0.04);color:var(--text);border-color:rgba(255,255,255,0.2)}
+
+/* Set grid — glowing cards */
+.sets-preview{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:700px;margin:0 auto;
+  animation:fade-up 0.4s 0.32s ease both;
+}
+.set-tag{
+  padding:7px 14px;border-radius:6px;
+  border:1px solid rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.02);
+  font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);
+  font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+  transition:all 0.2s;cursor:default;
+}
+.set-tag:hover{
+  border-color:rgba(139,92,246,0.4);color:var(--lavender);
+  background:rgba(124,58,237,0.08);
+  box-shadow:0 0 12px rgba(124,58,237,0.15);
+}
+.set-tag.hot{
+  border-color:rgba(236,72,153,0.25);color:rgba(249,168,212,0.7);
+  background:rgba(236,72,153,0.06);
+}
+.set-tag.hot:hover{
+  border-color:rgba(236,72,153,0.5);color:var(--pink);
+  box-shadow:0 0 12px rgba(236,72,153,0.2);
+}
+
+/* Stats — horizontal neon bar */
+.stats-bar{
+  width:100%;max-width:1280px;margin:0 auto;
+  border-top:1px solid rgba(124,58,237,0.1);
+  display:flex;
+  box-shadow:0 -1px 0 0 rgba(124,58,237,0.05);
+}
+.sb-item{
+  flex:1;padding:20px 40px;text-align:center;
+  border-right:1px solid rgba(124,58,237,0.08);
+  position:relative;
+}
+.sb-item:last-child{border-right:none}
+.sb-n{
+  font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:0.04em;
+  color:#fff;line-height:1;
+  text-shadow:0 0 20px rgba(139,92,246,0.3);
+}
+.sb-l{
+  font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);
+  letter-spacing:0.12em;text-transform:uppercase;margin-top:4px;
+}
+
+@keyframes fade-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.placeholder{min-height:300px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;font-family:'Space Mono',monospace;letter-spacing:0.12em;text-transform:uppercase;border-top:1px solid rgba(124,58,237,0.1)}
+</style>
+</head>
+<body>
+
+<div class="grid-floor"></div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </div>
+      <div class="logo-divider"></div>
+      <div class="logo-text">
+        <span class="logo-title">CoastiesBinder</span>
+        <span class="logo-sub">Pokémon Tracker</span>
+      </div>
+    </a>
+    <div class="nav-search">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search cards, sets...">
+    </div>
+    <div class="nav-links">
+      <a href="#" class="active">Home</a>
+      <a href="#">My Binders</a>
+      <a href="#">Browse Sets</a>
+      <a href="#">Shop ↗</a>
+    </div>
+    <div class="nav-right">
+      <a href="#" class="btn-ghost">Log in</a>
+      <a href="#" class="btn-violet">Get started</a>
+      <a href="https://coastiescollectibles.com" class="nav-icon" title="Shop">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="orb"></div>
+  <div class="vline vline-l"></div>
+  <div class="vline vline-r"></div>
+
+  <div class="hero-inner-wrap">
+  <div class="hero-counter">
+    <span class="hc-bracket">[</span>
+    Pokémon Collection Tracker
+    <span class="hc-bracket">]</span>
+  </div>
+
+  <h1 class="hero-title">
+    <span class="hero-title-main">Your binder.</span>
+    <span class="hero-title-accent" data-text="Perfected.">Perfected.</span>
+  </h1>
+
+  <p class="hero-sub">
+    Track every card you own across 180+ Pokémon sets. See your gaps. Shop them instantly from Coasties. Built for collectors who care about completing the set.
+  </p>
+
+  <div class="hero-cta">
+    <a href="#" class="cta-main">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Start your binder free
+    </a>
+    <a href="#" class="cta-ghost">View demo →</a>
+  </div>
+
+  <div class="sets-preview">
+    <div class="set-tag hot">Destined Rivals ✦</div>
+    <div class="set-tag hot">Black Bolt ✦</div>
+    <div class="set-tag hot">White Flare ✦</div>
+    <div class="set-tag hot">Ascended Heroes ✦</div>
+    <div class="set-tag">Prismatic Evolutions</div>
+    <div class="set-tag">Surging Sparks</div>
+    <div class="set-tag">Stellar Crown</div>
+    <div class="set-tag">Journey Together</div>
+    <div class="set-tag">Paradox Rift</div>
+    <div class="set-tag">Temporal Forces</div>
+    <div class="set-tag">+ 170 more sets</div>
+  </div>
+  </div><!-- /hero-inner-wrap -->
+</section>
+
+<div class="stats-bar">
+  <div class="sb-item">
+    <div class="sb-n">180+</div>
+    <div class="sb-l">Sets available</div>
+  </div>
+  <div class="sb-item">
+    <div class="sb-n">15K+</div>
+    <div class="sb-l">Cards indexed</div>
+  </div>
+  <div class="sb-item">
+    <div class="sb-n">Free</div>
+    <div class="sb-l">To get started</div>
+  </div>
+  <div class="sb-item">
+    <div class="sb-n">Live</div>
+    <div class="sb-l">Always updated</div>
+  </div>
+</div>
+
+<div class="placeholder">// more sections incoming</div>
+
+</body>
+</html>

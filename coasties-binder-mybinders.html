@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoastiesBinder — My Binders</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#020209;--surface:#080818;--surface2:#0d0c22;--surface3:#1c1a3d;
+  --border:#141230;--border2:#1e1c40;
+  --violet:#7c3aed;--violet2:#6d28d9;--violet-hi:#8b5cf6;
+  --lavender:#c4b5fd;--lavender2:#a78bfa;
+  --pink:#ec4899;--green:#34d399;--amber:#f59e0b;--gold:#fbbf24;
+  --blue:#60a5fa;--teal:#2dd4bf;
+  --text:#ddd8f8;--text2:#9d96cc;--muted:#3a3660;
+  --trans:0.15s ease;
+}
+html{scroll-behavior:smooth;scrollbar-gutter:stable}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden;min-height:100dvh}
+
+/* ── NAV (exact binder copy) ── */
+.nav{
+  height:80px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  background:rgba(2,2,9,0.95);
+  backdrop-filter:blur(24px);
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;
+}
+.nav-inner{
+  display:flex;align-items:center;
+  width:100%;max-width:1280px;
+  padding:0 32px;gap:0;
+}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;margin-right:20px}
+.logo-mark{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--violet),var(--violet2));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(124,58,237,0.4)}
+.logo-divider{width:1px;height:26px;background:rgba(255,255,255,0.1);flex-shrink:0;margin:0 4px}
+.logo-text{display:flex;flex-direction:column;line-height:1;gap:2px}
+.logo-title{font-family:'Bebas Neue',sans-serif;font-size:16px;font-weight:400;color:#fff;letter-spacing:0.04em}
+.logo-sub{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase}
+.nav-search{
+  flex:1;
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  border-radius:8px;padding:0 14px;height:36px;
+  transition:border-color var(--trans);margin-right:20px;
+}
+.nav-search:focus-within{border-color:rgba(124,58,237,0.4)}
+.nav-search svg{color:var(--muted);flex-shrink:0}
+.nav-search input{background:none;border:none;outline:none;font-family:'Outfit',sans-serif;font-size:13px;color:var(--text);width:100%}
+.nav-search input::placeholder{color:var(--muted)}
+.nav-links{display:flex;gap:2px;flex-shrink:0;margin-right:16px}
+.nav-links a{font-size:12px;color:var(--muted);text-decoration:none;font-weight:500;padding:5px 10px;border-radius:6px;transition:all var(--trans);white-space:nowrap}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+.nav-links a.active{color:var(--lavender);background:rgba(124,58,237,0.08)}
+.nav-right{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.08);color:var(--text2);padding:6px 12px;border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit;transition:all var(--trans);font-weight:500;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.18);color:var(--text)}
+.btn-violet{background:linear-gradient(135deg,var(--violet),var(--violet2));color:#fff;padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;box-shadow:0 2px 12px rgba(124,58,237,0.35);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn-violet:hover{box-shadow:0 4px 20px rgba(124,58,237,0.5);transform:translateY(-1px)}
+.nav-icon{width:34px;height:34px;border-radius:7px;border:1px solid rgba(255,255,255,0.08);background:transparent;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all var(--trans);text-decoration:none;flex-shrink:0}
+.nav-icon:hover{border-color:rgba(255,255,255,0.18);color:var(--text)}
+
+/* ── PAGE LAYOUT ── */
+.page{max-width:1280px;margin:0 auto;padding:48px 32px 80px}
+
+/* ── MAIN LAYOUT WITH SIDEBAR ── */
+.main-layout{display:flex;align-items:flex-start;gap:20px}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:192px;flex-shrink:0;
+  position:sticky;top:100px;
+  display:flex;flex-direction:column;gap:16px;
+}
+.sb-card{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:12px;padding:16px 14px;
+}
+.sb-stats{display:flex;flex-direction:column;gap:10px}
+.sb-stat{display:flex;flex-direction:column;gap:2px}
+.sb-stat-n{
+  font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:0.04em;
+  color:#fff;line-height:1;
+}
+.sb-stat-l{
+  font-family:'Space Mono',monospace;font-size:8px;font-weight:700;
+  color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;
+}
+.sb-stat-bar{
+  height:2px;background:rgba(255,255,255,0.06);border-radius:1px;
+  margin-top:4px;overflow:hidden;
+}
+.sb-stat-fill{height:100%;border-radius:1px;background:linear-gradient(90deg,var(--violet),var(--violet-hi));transition:width 0.4s ease}
+.sb-divider{height:1px;background:var(--border);margin:2px 0}
+.sb-label{
+  font-size:9px;font-weight:700;color:var(--text2);
+  letter-spacing:0.12em;text-transform:uppercase;
+  margin-bottom:6px;font-family:'Space Mono',monospace;opacity:0.6;
+}
+.sb-section{display:flex;flex-direction:column;gap:3px}
+.sbf{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 10px;border-radius:7px;
+  border:1px solid transparent;
+  cursor:pointer;font-size:12px;color:var(--text2);font-weight:500;
+  transition:all var(--trans);user-select:none;
+  background:transparent;width:100%;text-align:left;font-family:inherit;
+}
+.sbf:hover{background:rgba(255,255,255,0.04);color:var(--text);border-color:var(--border)}
+.sbf.on{background:rgba(124,58,237,0.1);border-color:rgba(124,58,237,0.3);color:var(--lavender)}
+.sbf-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background var(--trans)}
+.sbf.on .sbf-dot{background:var(--violet-hi)}
+.sbf-swatch{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ── CONTENT AREA ── */
+.content{flex:1;min-width:0}
+
+/* ── PAGE HEADER ── */
+.page-header{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-bottom:28px;
+  padding-bottom:20px;
+  border-bottom:1px solid var(--border);
+}
+.page-header-left{}
+.page-header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.page-eyebrow{
+  font-family:'Space Mono',monospace;font-size:10px;font-weight:700;
+  color:var(--text2);letter-spacing:0.16em;text-transform:uppercase;
+  margin-bottom:6px;
+}
+.page-title{
+  font-family:'Bebas Neue',sans-serif;font-size:40px;font-weight:400;
+  color:#fff;letter-spacing:0.03em;line-height:1;
+}
+.page-sub{font-size:13px;color:var(--text2);margin-top:6px;font-weight:400}
+
+/* ── VIEW TOGGLE ── */
+.view-toggle{display:flex;gap:2px}
+.view-btn{
+  height:30px;border-radius:6px;border:1px solid var(--border);
+  background:transparent;display:flex;align-items:center;justify-content:center;
+  gap:5px;padding:0 10px;
+  color:var(--muted);cursor:pointer;transition:all var(--trans);
+  font-size:11px;font-weight:500;font-family:inherit;
+}
+.view-btn:hover{color:var(--text2);border-color:var(--border2)}
+.view-btn.active{color:var(--lavender);border-color:rgba(124,58,237,0.35);background:rgba(124,58,237,0.08)}
+
+/* ── LIST VIEW ── */
+.binders-grid.list-view{
+  grid-template-columns:1fr;gap:8px;
+}
+.binders-grid.list-view .binder-new{
+  flex-direction:row;min-height:auto;padding:16px 20px;gap:16px;justify-content:flex-start;
+}
+.binders-grid.list-view .binder-card{
+  display:grid;grid-template-columns:200px 1fr;align-items:stretch;
+}
+.binders-grid.list-view .binder-cover{
+  height:100%;min-height:90px;border-radius:16px 0 0 16px;
+}
+.binders-grid.list-view .binder-cover-logo{height:40px}
+.binders-grid.list-view .binder-body{
+  display:flex;align-items:center;padding:0;gap:0;flex-wrap:nowrap;
+}
+.binders-grid.list-view .binder-info{
+  width:220px;flex-shrink:0;padding:0 20px;
+  border-right:1px solid rgba(255,255,255,0.05);
+  display:flex;flex-direction:column;justify-content:center;gap:2px;
+}
+.binders-grid.list-view .binder-name{margin-bottom:0;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.binders-grid.list-view .binder-set-id{margin-bottom:0}
+.binders-grid.list-view .binder-prog{flex:1;margin-bottom:0;padding:0 28px}
+.binders-grid.list-view .binder-prog-bar{width:100%}
+.binders-grid.list-view .binder-prog-row{display:flex;justify-content:space-between}
+.binders-grid.list-view .binder-footer{
+  width:130px;flex-shrink:0;padding:0 20px 0 0;
+  border-top:none;margin-left:0;
+  display:flex;align-items:center;justify-content:flex-end;
+}
+.binders-grid.list-view .binder-updated{
+  white-space:nowrap;width:100%;
+  flex-direction:row-reverse;gap:5px;
+}
+.binders-grid.list-view .binder-actions{display:none}
+.binder-count{font-size:12px;color:var(--muted);font-weight:500;margin-left:8px}
+
+/* ── BINDERS GRID ── */
+.binders-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:16px;
+}
+
+/* ── IMPROVED NEW BINDER CARD ── */
+.binder-new{
+  border:1px dashed rgba(124,58,237,0.3);
+  border-radius:16px;
+  background:repeating-linear-gradient(
+    -45deg,
+    rgba(124,58,237,0.02) 0px,
+    rgba(124,58,237,0.02) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;padding:40px 24px;cursor:pointer;
+  transition:all 0.25s ease;min-height:220px;
+  text-decoration:none;position:relative;overflow:hidden;
+}
+.binder-new::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 100%, rgba(124,58,237,0.08), transparent);
+  opacity:0;transition:opacity 0.25s;
+}
+.binder-new:hover{
+  border-color:rgba(124,58,237,0.55);
+  background:repeating-linear-gradient(
+    -45deg,
+    rgba(124,58,237,0.04) 0px,
+    rgba(124,58,237,0.04) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(124,58,237,0.12);
+}
+.binder-new:hover::after{opacity:1}
+.binder-new-icon{
+  width:48px;height:48px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(109,40,217,0.1));
+  border:1px solid rgba(124,58,237,0.3);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--violet-hi);transition:all 0.25s;
+  box-shadow:0 0 0 0 rgba(124,58,237,0);
+  position:relative;z-index:1;
+}
+.binder-new:hover .binder-new-icon{
+  background:linear-gradient(135deg,rgba(124,58,237,0.3),rgba(109,40,217,0.2));
+  box-shadow:0 0 20px rgba(124,58,237,0.3),0 0 0 6px rgba(124,58,237,0.06);
+}
+.binder-new-label{font-size:14px;font-weight:600;color:var(--text2);position:relative;z-index:1;transition:color 0.2s}
+.binder-new:hover .binder-new-label{color:var(--lavender)}
+.binder-new-sub{font-size:11px;color:var(--muted);text-align:center;position:relative;z-index:1;line-height:1.5}
+.binder-new-sets{
+  display:flex;gap:4px;flex-wrap:wrap;justify-content:center;
+  position:relative;z-index:1;margin-top:-4px;
+}
+.binder-new-dot{
+  width:6px;height:6px;border-radius:50%;opacity:0.5;
+  transition:opacity 0.2s;
+}
+.binder-new:hover .binder-new-dot{opacity:0.8}
+
+/* ── BINDER CARD ── */
+.binder-card{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:16px;overflow:hidden;cursor:pointer;
+  transition:all 0.2s ease;position:relative;
+  text-decoration:none;display:block;
+}
+.binder-card:hover{
+  border-color:rgba(124,58,237,0.3);transform:translateY(-3px);
+  box-shadow:0 12px 40px rgba(0,0,0,0.4),0 0 0 1px rgba(124,58,237,0.15);
+}
+/* Shimmer top line */
+.binder-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(196,181,253,0.2),transparent);
+  opacity:0;transition:opacity 0.2s;
+}
+.binder-card:hover::before{opacity:1}
+
+/* Card cover / art area */
+.binder-cover{
+  height:140px;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.binder-cover-bg{position:absolute;inset:0}
+.binder-cover-logo{
+  position:relative;z-index:3;
+  width:auto;height:64px;
+  object-fit:contain;
+  filter:drop-shadow(0 2px 16px rgba(0,0,0,0.8)) drop-shadow(0 0 8px rgba(0,0,0,0.6));
+}
+.binder-cover-symbol{
+  position:absolute;bottom:10px;right:12px;z-index:4;
+  width:20px;height:20px;object-fit:contain;
+  filter:drop-shadow(0 1px 4px rgba(0,0,0,0.5));
+  opacity:0.7;
+}
+.binder-cover-icon{
+  position:relative;z-index:3;
+  font-size:36px;opacity:0.9;
+  filter:drop-shadow(0 4px 16px rgba(0,0,0,0.4));
+}
+.binder-cover-badge{
+  position:absolute;top:10px;left:12px;z-index:4;
+  font-family:'Space Mono',monospace;font-size:9px;font-weight:700;
+  color:rgba(255,255,255,0.9);letter-spacing:0.12em;text-transform:uppercase;
+  background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.15);
+  border-radius:5px;padding:3px 7px;backdrop-filter:blur(4px);
+}
+/* Completion ring in top-right */
+.binder-cover-pct{
+  position:absolute;top:10px;right:10px;z-index:4;
+  width:36px;height:36px;
+}
+.pct-ring{transform:rotate(-90deg)}
+.pct-bg{fill:none;stroke:rgba(255,255,255,0.1);stroke-width:3}
+.pct-fill{fill:none;stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset 0.5s ease}
+.pct-label{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:10px;color:#fff;letter-spacing:0.04em;
+}
+
+/* Card body */
+.binder-body{padding:14px 16px 16px}
+.binder-name{
+  font-family:'Bebas Neue',sans-serif;font-size:20px;font-weight:400;
+  color:#fff;letter-spacing:0.04em;line-height:1;margin-bottom:4px;
+}
+.binder-set-id{
+  font-family:'Space Mono',monospace;font-size:9px;font-weight:700;
+  color:var(--text2);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px;
+}
+
+/* Progress bar */
+.binder-prog{margin-bottom:12px}
+.binder-prog-bar{
+  height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:6px;
+}
+.binder-prog-fill{height:100%;border-radius:2px;transition:width 0.4s ease}
+.binder-prog-row{display:flex;justify-content:space-between;align-items:baseline}
+.binder-owned{font-size:12px;font-weight:600;color:var(--text2)}
+.binder-owned strong{color:var(--text);font-weight:700}
+.binder-total{font-size:11px;color:var(--muted)}
+
+/* Footer row */
+.binder-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:10px;border-top:1px solid rgba(255,255,255,0.05);
+}
+.binder-updated{
+  font-size:10px;color:var(--muted);font-weight:500;
+  display:flex;align-items:center;gap:4px;
+}
+.binder-updated svg{opacity:0.5}
+.binder-actions{display:flex;gap:4px;opacity:0;transition:opacity var(--trans)}
+.binder-card:hover .binder-actions{opacity:1}
+.action-btn{
+  width:26px;height:26px;border-radius:6px;border:1px solid var(--border2);
+  background:var(--surface2);display:flex;align-items:center;justify-content:center;
+  color:var(--text2);cursor:pointer;transition:all var(--trans);
+}
+.action-btn:hover{border-color:rgba(255,255,255,0.18);color:var(--text)}
+.action-btn.danger:hover{border-color:rgba(239,68,68,0.4);color:#ef4444;background:rgba(239,68,68,0.08)}
+
+/* Delete confirm state */
+.binder-card.confirm-delete{
+  border-color:rgba(239,68,68,0.4);
+  box-shadow:0 0 0 1px rgba(239,68,68,0.2),0 8px 32px rgba(239,68,68,0.1);
+}
+.binder-card.confirm-delete .binder-actions{opacity:1}
+.confirm-row{
+  display:flex;align-items:center;gap:6px;
+}
+.confirm-yes{
+  font-size:11px;font-weight:600;color:#ef4444;
+  background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);
+  border-radius:6px;padding:4px 10px;cursor:pointer;font-family:inherit;
+  transition:all var(--trans);white-space:nowrap;
+}
+.confirm-yes:hover{background:rgba(239,68,68,0.2);border-color:rgba(239,68,68,0.5)}
+.confirm-no{
+  font-size:11px;font-weight:500;color:var(--text2);
+  background:transparent;border:1px solid var(--border2);
+  border-radius:6px;padding:4px 10px;cursor:pointer;font-family:inherit;
+  transition:all var(--trans);white-space:nowrap;
+}
+.confirm-no:hover{border-color:rgba(255,255,255,0.18);color:var(--text)}
+/* ── FAVOURITE ── */
+.action-btn.fav-btn.favourited{color:#fbbf24;border-color:rgba(251,191,36,0.4);background:rgba(251,191,36,0.08)}
+.binder-cover-fav{
+  position:absolute;bottom:10px;right:10px;z-index:4;
+  opacity:0;transition:opacity var(--trans);pointer-events:none;
+}
+.binder-card[data-fav="1"] .binder-cover-fav{opacity:1}
+.rarity-strip{
+  position:absolute;bottom:0;left:0;right:0;height:3px;
+}
+
+/* ── COVER THEMES ── */
+.cover-sv{background:linear-gradient(135deg,#1a0533 0%,#2d1060 40%,#0e1a3d 100%)}
+.cover-me{background:linear-gradient(135deg,#1a0808 0%,#3d0f0f 40%,#1a1a08 100%)}
+.cover-swsh{background:linear-gradient(135deg,#071a1a 0%,#0f3d2e 40%,#071a30 100%)}
+.cover-sm{background:linear-gradient(135deg,#1a1208 0%,#3d2e0f 40%,#0f1a07 100%)}
+
+/* ── MODAL BACKDROP ── */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(8px);z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.2s;
+}
+.modal-backdrop.open{opacity:1;pointer-events:all}
+.modal{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:20px;padding:28px;width:440px;max-width:calc(100vw - 48px);
+  position:relative;
+  transform:translateY(12px);transition:transform 0.2s;
+}
+.modal-backdrop.open .modal{transform:translateY(0)}
+.modal::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;border-radius:20px 20px 0 0;
+  background:linear-gradient(90deg,transparent,rgba(196,181,253,0.3),transparent);
+}
+.modal-title{
+  font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:0.04em;
+  color:#fff;margin-bottom:6px;
+}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.modal-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:0.04em}
+.modal-input{
+  width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);
+  border-radius:8px;padding:10px 14px;font-size:13px;color:var(--text);
+  font-family:'Outfit',sans-serif;outline:none;
+  transition:border-color var(--trans);margin-bottom:16px;
+}
+.modal-input:focus{border-color:rgba(124,58,237,0.4)}
+.modal-input::placeholder{color:var(--muted)}
+
+#modalBackdrop .modal{
+  width:1100px;max-width:calc(100vw - 32px);padding:0;overflow:hidden;
+}
+.modal-header{
+  padding:28px 28px 0;
+  position:relative;
+}
+.modal-close{
+  position:absolute;top:24px;right:24px;
+  width:28px;height:28px;border-radius:6px;
+  border:1px solid var(--border2);background:transparent;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);cursor:pointer;transition:all var(--trans);
+}
+.modal-close:hover{border-color:rgba(255,255,255,0.18);color:var(--text)}
+.modal-search{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border2);
+  border-radius:8px;padding:0 14px;height:40px;margin:16px 28px 0;
+  transition:border-color var(--trans);
+}
+.modal-search:focus-within{border-color:rgba(124,58,237,0.4)}
+.modal-search svg{color:var(--muted);flex-shrink:0}
+.modal-search input{
+  background:none;border:none;outline:none;
+  font-family:'Outfit',sans-serif;font-size:13px;color:var(--text);width:100%;
+}
+.modal-search input::placeholder{color:var(--muted)}
+.set-grid-wrap{
+  padding:16px 28px;max-height:520px;overflow-y:auto;
+}
+.set-era-label{
+  display:flex;align-items:center;gap:10px;
+  margin:20px 0 12px;
+}
+.set-era-label:first-child{margin-top:4px}
+.set-era-label-text{
+  font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.08em;
+  color:var(--text);white-space:nowrap;
+}
+.set-era-label-line{
+  flex:1;height:1px;
+  background:linear-gradient(90deg,var(--border2),transparent);
+}
+.set-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:12px;margin-bottom:4px;
+}
+.set-card{
+  border:1px solid var(--border2);border-radius:12px;
+  overflow:hidden;cursor:pointer;transition:all 0.2s;
+  background:var(--surface2);
+}
+.set-card:hover{border-color:rgba(124,58,237,0.3);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.3)}
+.set-card.selected{border-color:rgba(124,58,237,0.6);box-shadow:0 0 0 1px rgba(124,58,237,0.3),0 6px 20px rgba(124,58,237,0.15)}
+.set-card-cover{
+  height:170px;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.set-card-coming-soon{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  position:relative;z-index:2;
+}
+.set-card-coming-soon span{
+  font-family:'Space Mono',monospace;font-size:8px;font-weight:700;
+  color:rgba(255,255,255,0.25);letter-spacing:0.14em;text-transform:uppercase;
+}
+.set-card-icon{font-size:36px;position:relative;z-index:2}
+.set-card-logo{
+  height:95px;width:88%;object-fit:contain;
+  position:relative;z-index:2;
+  filter:drop-shadow(0 1px 8px rgba(0,0,0,0.8));
+}
+.set-card-badge{
+  position:absolute;top:8px;left:8px;z-index:3;
+  font-family:'Space Mono',monospace;font-size:8px;font-weight:700;
+  color:rgba(255,255,255,0.9);letter-spacing:0.1em;
+  background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.12);
+  border-radius:4px;padding:3px 6px;backdrop-filter:blur(4px);
+}
+.set-card-check{
+  position:absolute;top:8px;right:8px;z-index:3;
+  width:20px;height:20px;border-radius:50%;
+  background:var(--violet);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity 0.15s;
+}
+.set-card.selected .set-card-check{opacity:1}
+.set-card-body{padding:10px 12px 12px}
+.set-card-name{
+  font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.04em;
+  color:#fff;line-height:1;margin-bottom:4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.set-card-meta{
+  font-size:11px;font-weight:500;
+  color:var(--text2);
+}
+.set-card-strip{height:2px;margin-top:8px;border-radius:1px}
+.modal-footer{
+  padding:16px 28px 24px;
+  border-top:1px solid var(--border);
+  background:var(--surface);
+}
+.modal-footer-row{display:flex;gap:8px;align-items:center}
+.modal-footer-input{
+  flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border2);
+  border-radius:8px;padding:10px 14px;font-size:13px;color:var(--text);
+  font-family:'Outfit',sans-serif;outline:none;transition:border-color var(--trans);
+}
+.modal-footer-input:focus{border-color:rgba(124,58,237,0.4)}
+.modal-footer-input::placeholder{color:var(--muted)}
+.set-card{position:relative}
+.set-card.used{cursor:not-allowed;border-color:rgba(239,68,68,0.25)}
+.set-card.used:hover{transform:none;box-shadow:none;border-color:rgba(239,68,68,0.25)}
+/* Fake greyscale using a semi-opaque overlay on the cover instead of filter */
+.set-card.used .set-card-cover::after{
+  content:'';position:absolute;inset:0;z-index:3;
+  background:rgba(6,5,15,0.78);
+}
+.set-card.used .set-card-body{opacity:0.35}
+.set-card-used-overlay{
+  display:none;position:absolute;inset:0;z-index:5;
+  align-items:center;justify-content:center;pointer-events:none;
+}
+.set-card.used .set-card-used-overlay{display:flex}
+.set-card-used-pill{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(239,68,68,0.92);
+  border:1px solid rgba(255,120,120,0.5);
+  border-radius:20px;padding:6px 12px;
+  box-shadow:0 2px 12px rgba(239,68,68,0.5);
+}
+.set-card-used-pill svg{color:#fff;flex-shrink:0}
+.set-card-used-pill span{
+  font-family:'Space Mono',monospace;font-size:8px;font-weight:700;
+  color:#fff;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap;
+}
+/* Upcoming sets */
+.set-card.upcoming{cursor:not-allowed;border-style:dashed}
+.set-card.upcoming:hover{transform:none;box-shadow:none}
+.set-card.upcoming .set-card-cover::before{
+  content:'COMING SOON';
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%) rotate(-30deg);
+  z-index:6;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;letter-spacing:0.12em;
+  color:rgba(255,255,255,0.18);
+  white-space:nowrap;
+  pointer-events:none;
+}
+.set-card.upcoming .set-card-cover{filter:brightness(0.55) saturate(0.5)}
+.set-card.upcoming .set-card-body{opacity:0.7}
+.set-card-release{
+  font-family:'Space Mono',monospace;font-size:9px;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;
+  background:linear-gradient(90deg,#34d399,#6ee7b7);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-top:2px;
+}
+.modal-no-results{
+  padding:40px 0;text-align:center;
+  font-size:13px;color:var(--muted);
+}
+
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+.modal-cancel{
+  padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;
+  background:transparent;border:1px solid var(--border2);color:var(--text2);
+  cursor:pointer;font-family:inherit;transition:all var(--trans);
+}
+.modal-cancel:hover{border-color:rgba(255,255,255,0.18);color:var(--text)}
+.modal-confirm{
+  padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;
+  background:linear-gradient(135deg,var(--violet),var(--violet2));
+  color:#fff;border:none;cursor:pointer;font-family:inherit;
+  box-shadow:0 2px 12px rgba(124,58,237,0.35);transition:all 0.2s;
+}
+.modal-confirm:hover{box-shadow:0 4px 20px rgba(124,58,237,0.5);transform:translateY(-1px)}
+
+/* Animations */
+@keyframes fade-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.binder-new{animation:fade-up 0.4s ease both}
+.binder-card:nth-child(2){animation:fade-up 0.4s 0.05s ease both}
+.binder-card:nth-child(3){animation:fade-up 0.4s 0.10s ease both}
+.binder-card:nth-child(4){animation:fade-up 0.4s 0.15s ease both}
+.binder-card:nth-child(5){animation:fade-up 0.4s 0.20s ease both}
+.binder-card:nth-child(6){animation:fade-up 0.4s 0.25s ease both}
+.page-header{animation:fade-up 0.4s ease both}
+.page-header{animation:fade-up 0.4s 0.05s ease both}
+
+/* Toast */
+.toast{position:fixed;bottom:80px;right:16px;z-index:9999;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:11px 16px;display:flex;align-items:center;gap:9px;box-shadow:0 8px 32px rgba(0,0,0,0.5);transform:translateY(70px);opacity:0;transition:transform 0.22s ease,opacity 0.22s ease}
+@media(min-width:769px){.toast{bottom:24px;right:24px}}
+.toast.show{transform:translateY(0);opacity:1}
+.tdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.tdot.a{background:var(--green)}.tdot.r{background:var(--pink)}
+.ttxt{font-size:12px;color:var(--text);font-weight:500}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+
+  /* Nav */
+  .nav{height:60px}
+  .nav-inner{padding:0 16px;justify-content:space-between}
+  .nav-search{display:none}
+  .nav-links{display:none}
+  .nav-right .btn-ghost{display:none}
+  .nav-right .btn-violet{display:none}
+  .nav-right .nav-icon{display:none}
+  .logo{margin-right:0;position:absolute;left:50%;transform:translateX(-50%)}
+
+  /* Hamburger button */
+  .nav-hamburger{
+    display:flex;align-items:center;justify-content:center;
+    width:34px;height:34px;border-radius:8px;
+    border:1px solid rgba(255,255,255,0.08);
+    background:transparent;color:var(--text2);
+    cursor:pointer;margin-left:8px;flex-shrink:0;
+  }
+
+  /* Mobile nav menu popup */
+  .mobile-menu{
+    position:fixed;top:68px;right:16px;
+    background:var(--surface);border:1px solid var(--border2);
+    border-radius:12px;padding:8px;
+    z-index:200;min-width:180px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.6);
+    transform:scale(0.95) translateY(-8px);opacity:0;pointer-events:none;
+    transition:all 0.15s ease;transform-origin:top right;
+  }
+  .mobile-menu.open{transform:scale(1) translateY(0);opacity:1;pointer-events:all}
+  .mobile-menu-item{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 12px;border-radius:8px;
+    font-size:13px;color:var(--text2);text-decoration:none;font-weight:500;
+    transition:all var(--trans);cursor:pointer;
+    background:transparent;border:none;width:100%;text-align:left;font-family:inherit;
+  }
+  .mobile-menu-item:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+  .mobile-menu-item.active{color:var(--lavender)}
+  .mobile-menu-divider{height:1px;background:var(--border);margin:4px 0}
+  .menu-backdrop{
+    position:fixed;inset:0;z-index:199;
+    display:none;
+  }
+  .menu-backdrop.open{display:block}
+
+  /* Page */
+  .page{padding:20px 16px 100px}
+  .page-title{font-size:28px}
+  .page-sub{font-size:12px}
+  .page-header{margin-bottom:20px;justify-content:center}
+  .page-header-left{text-align:center}
+
+  /* Page header on mobile — stack vertically, centre */
+  .page-header{flex-direction:column;align-items:center;margin-bottom:16px;gap:12px}
+  .page-header-right{justify-content:center}
+
+  /* Layout */
+  .main-layout{flex-direction:column;gap:0}
+  .content{width:100%}
+
+  /* Sidebar becomes a slide-up drawer */
+  .sidebar{
+    position:fixed;bottom:0;left:0;right:0;top:auto;
+    width:100%;max-height:80dvh;
+    background:var(--surface);border-top:1px solid var(--border2);
+    border-radius:20px 20px 0 0;
+    padding:0 16px 32px;
+    flex-direction:column;gap:0;
+    z-index:150;
+    transform:translateY(100%);
+    transition:transform 0.3s ease;
+    overflow-y:auto;
+  }
+  .sidebar.open{transform:translateY(0)}
+  .sidebar-handle{
+    width:36px;height:4px;border-radius:2px;
+    background:rgba(255,255,255,0.15);
+    margin:12px auto 16px;flex-shrink:0;
+  }
+  .sb-card{
+    background:transparent;border:none;border-bottom:1px solid var(--border);
+    border-radius:0;padding:12px 0;
+  }
+  .sb-card:last-child{border-bottom:none}
+
+  /* Drawer backdrop */
+  .sidebar-backdrop{
+    position:fixed;inset:0;background:rgba(0,0,0,0.6);
+    z-index:149;opacity:0;pointer-events:none;
+    transition:opacity 0.3s;
+  }
+  .sidebar-backdrop.open{opacity:1;pointer-events:all}
+
+  /* Filter button in toolbar */
+  .filter-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:6px 12px;border-radius:7px;font-size:11px;font-weight:600;
+    background:transparent;border:1px solid var(--border2);
+    color:var(--text2);cursor:pointer;font-family:inherit;
+    transition:all var(--trans);margin-left:auto;
+  }
+  .filter-btn.has-filter{
+    border-color:rgba(124,58,237,0.4);color:var(--lavender);
+    background:rgba(124,58,237,0.08);
+  }
+  .filter-btn-dot{
+    width:5px;height:5px;border-radius:50%;
+    background:var(--violet-hi);display:none;
+  }
+  .filter-btn.has-filter .filter-btn-dot{display:block}
+
+  /* Grid — single column, full width */
+  .binders-grid{
+    grid-template-columns:1fr!important;
+    width:100%;
+  }
+
+  /* Binder cards on mobile */
+  .binder-cover{height:110px}
+  .binder-cover-logo{height:48px}
+  .binder-body{padding:12px 14px 14px}
+  .binder-name{font-size:18px}
+
+  /* List view on mobile — simplify */
+  .binders-grid.list-view .binder-card{grid-template-columns:120px 1fr}
+  .binders-grid.list-view .binder-cover{min-height:76px}
+  .binders-grid.list-view .binder-cover-logo{height:32px}
+  .binders-grid.list-view .binder-info{width:140px;padding:0 12px}
+  .binders-grid.list-view .binder-prog{padding:0 12px}
+  .binders-grid.list-view .binder-footer{display:none}
+
+  /* New binder card */
+  .binder-new{min-height:140px;padding:24px 16px}
+
+  /* Hide view toggle */
+  .view-toggle{display:none}
+
+  /* Modals full width, slide up */
+  .modal{width:100%;max-width:100%;border-radius:20px 20px 0 0;position:fixed;bottom:0;left:0;right:0;margin:0;max-height:90dvh;overflow-y:auto}
+  .modal-backdrop{align-items:flex-end}
+
+  /* Bottom nav bar */
+  .mobile-nav{
+    position:fixed;bottom:0;left:0;right:0;z-index:120;
+    height:64px;
+    background:rgba(2,2,9,0.96);
+    border-top:1px solid rgba(255,255,255,0.06);
+    backdrop-filter:blur(24px);
+    display:flex;align-items:center;justify-content:space-around;
+    padding:0 8px;
+  }
+  .mobile-nav-btn{
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+    padding:8px 16px;border-radius:10px;
+    background:transparent;border:none;color:var(--muted);
+    cursor:pointer;font-family:inherit;transition:all var(--trans);
+    flex:1;
+  }
+  .mobile-nav-btn.active{color:var(--lavender)}
+  .mobile-nav-btn svg{flex-shrink:0}
+  .mobile-nav-label{font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;font-family:'Space Mono',monospace}
+}
+@media(min-width:769px){
+  .mobile-nav{display:none}
+  .sidebar-backdrop{display:none}
+  .filter-btn{display:none}
+  .nav-hamburger{display:none}
+  .mobile-menu{display:none}
+  .menu-backdrop{display:none!important}
+  .sidebar-handle{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="coasties-binder-index.html" class="logo">
+      <div class="logo-mark">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </div>
+      <div class="logo-divider"></div>
+      <div class="logo-text">
+        <span class="logo-title">CoastiesBinder</span>
+        <span class="logo-sub">Pokémon Tracker</span>
+      </div>
+    </a>
+    <div class="nav-search">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search cards, sets..." id="searchInput">
+    </div>
+    <div class="nav-links">
+      <a href="coasties-binder-index.html">Home</a>
+      <a href="#" class="active">My Binders</a>
+      <a href="#">Browse Sets</a>
+      <a href="#">Shop ↗</a>
+    </div>
+    <div class="nav-right">
+      <a href="#" class="btn-ghost">Log in</a>
+      <a href="#" class="btn-violet">Get started</a>
+      <a href="https://coastiescollectibles.com" class="nav-icon" title="Shop">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      </a>
+      <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile menu popup -->
+<div class="menu-backdrop" id="menuBackdrop" onclick="closeMenu()"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="coasties-binder-index.html" class="mobile-menu-item">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    Home
+  </a>
+  <a href="#" class="mobile-menu-item active">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    My Binders
+  </a>
+  <a href="#" class="mobile-menu-item">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+    Browse Sets
+  </a>
+  <div class="mobile-menu-divider"></div>
+  <a href="https://coastiescollectibles.com" class="mobile-menu-item">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    Shop ↗
+  </a>
+  <div class="mobile-menu-divider"></div>
+  <a href="#" class="mobile-menu-item">Log in</a>
+  <a href="#" class="mobile-menu-item" style="color:var(--lavender)">Get started</a>
+</div>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- Header + toolbar combined -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-eyebrow">Collection</div>
+      <h1 class="page-title">My Binders</h1>
+      <p class="page-sub">Track your Pokémon card collection across every set</p>
+    </div>
+    <div class="page-header-right">
+      <button class="filter-btn" id="filterBtn" onclick="openSidebar()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+        Filter
+        <div class="filter-btn-dot"></div>
+      </button>
+      <div class="view-toggle">
+        <button class="view-btn active" title="Grid view" onclick="setView('grid',this)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Grid
+        </button>
+        <button class="view-btn" title="List view" onclick="setView('list',this)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          List
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar + Grid -->
+  <div class="main-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-handle"></div>
+      <!-- Stats -->
+      <div class="sb-card">
+        <div class="sb-label">Collection</div>
+        <div class="sb-stats">
+          <div class="sb-stat">
+            <div class="sb-stat-n" id="statBinders">0</div>
+            <div class="sb-stat-l">Binders</div>
+          </div>
+          <div class="sb-divider"></div>
+          <div class="sb-stat">
+            <div class="sb-stat-n" id="statOwned">0</div>
+            <div class="sb-stat-l">Cards owned</div>
+          </div>
+          <div class="sb-stat">
+            <div class="sb-stat-n" id="statTotal">0</div>
+            <div class="sb-stat-l">Cards tracked</div>
+          </div>
+          <div class="sb-stat">
+            <div class="sb-stat-n" id="statPct">0%</div>
+            <div class="sb-stat-l">Complete</div>
+            <div class="sb-stat-bar"><div class="sb-stat-fill" id="statBar" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sort -->
+      <div class="sb-card">
+        <div class="sb-label">Sort by</div>
+        <div class="sb-section">
+          <button class="sbf on" data-sort="recent" onclick="setSort('recent',this)">
+            <span class="sbf-dot"></span>Recent
+          </button>
+          <button class="sbf" data-sort="name" onclick="setSort('name',this)">
+            <span class="sbf-dot"></span>Name
+          </button>
+          <button class="sbf" data-sort="progress" onclick="setSort('progress',this)">
+            <span class="sbf-dot"></span>Progress
+          </button>
+          <button class="sbf" data-sort="newest" onclick="setSort('newest',this)">
+            <span class="sbf-dot"></span>Newest set
+          </button>
+          <button class="sbf" data-sort="oldest" onclick="setSort('oldest',this)">
+            <span class="sbf-dot"></span>Oldest set
+          </button>
+        </div>
+      </div>
+
+      <!-- Era filter -->
+      <div class="sb-card">
+        <div class="sb-label">Era</div>
+        <div class="sb-section">
+          <button class="sbf on" data-era="all" onclick="setEra('all',this)">
+            <span class="sbf-dot"></span>All sets
+          </button>
+          <button class="sbf" data-era="Mega Evolution" onclick="setEra('Mega Evolution',this)">
+            <span class="sbf-swatch" style="background:#f59e0b"></span>Mega Evolution
+          </button>
+          <button class="sbf" data-era="Scarlet &amp; Violet" onclick="setEra('Scarlet &amp; Violet',this)">
+            <span class="sbf-swatch" style="background:#8b5cf6"></span>Scarlet &amp; Violet
+          </button>
+          <button class="sbf" data-era="Sword &amp; Shield" onclick="setEra('Sword &amp; Shield',this)">
+            <span class="sbf-swatch" style="background:#2dd4bf"></span>Sword &amp; Shield
+          </button>
+          <button class="sbf" data-era="Sun &amp; Moon" onclick="setEra('Sun &amp; Moon',this)">
+            <span class="sbf-swatch" style="background:#818cf8"></span>Sun &amp; Moon
+          </button>
+        </div>
+      </div>
+
+      <!-- Progress filter -->
+      <div class="sb-card">
+        <div class="sb-label">Progress</div>
+        <div class="sb-section">
+          <button class="sbf on" data-prog="all" onclick="setProg('all',this)">
+            <span class="sbf-dot"></span>All
+          </button>
+          <button class="sbf" data-prog="fav" onclick="setProg('fav',this)">
+            <span class="sbf-dot" style="background:#fbbf24"></span>Favourites
+          </button>
+          <button class="sbf" data-prog="inprogress" onclick="setProg('inprogress',this)">
+            <span class="sbf-dot"></span>In progress
+          </button>
+          <button class="sbf" data-prog="complete" onclick="setProg('complete',this)">
+            <span class="sbf-dot"></span>Complete
+          </button>
+          <button class="sbf" data-prog="empty" onclick="setProg('empty',this)">
+            <span class="sbf-dot"></span>Not started
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="binders-grid" id="bindersGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar backdrop (mobile) -->
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+<!-- Mobile bottom nav -->
+<nav class="mobile-nav">
+  <button class="mobile-nav-btn active" onclick="window.scrollTo(0,0)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    <span class="mobile-nav-label">Binders</span>
+  </button>
+  <button class="mobile-nav-btn" onclick="openModal()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+    <span class="mobile-nav-label">New</span>
+  </button>
+  <button class="mobile-nav-btn" onclick="openSidebar()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+    <span class="mobile-nav-label">Filter</span>
+  </button>
+</nav>
+<div class="modal-backdrop" id="renameBackdrop" onclick="closeRenameOutside(event)">
+  <div class="modal">
+    <div class="modal-title">Rename Binder</div>
+    <div class="modal-sub">Choose a new name for this binder</div>
+    <div class="modal-label">Binder name</div>
+    <input class="modal-input" id="renameInput" type="text" placeholder="Binder name">
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeRename()">Cancel</button>
+      <button class="modal-confirm" onclick="confirmRename()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Create binder modal -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">New Binder</div>
+      <div class="modal-sub" style="margin-bottom:0">Choose a set to start tracking</div>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <!-- Search -->
+    <div class="modal-search">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search sets..." id="setSearchInput" oninput="filterSets()">
+    </div>
+    <!-- Set grid -->
+    <div class="set-grid-wrap" id="setGridWrap"></div>
+    <!-- Footer -->
+    <div class="modal-footer">
+      <div class="modal-footer-row">
+        <input class="modal-footer-input" id="binderNameInput" type="text" placeholder="Binder name (auto-filled when you pick a set)">
+        <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+        <button class="modal-confirm" onclick="createBinder()">Create</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <div class="tdot a" id="tdot"></div>
+  <div class="ttxt" id="ttxt"></div>
+</div>
+
+<script>
+// ── MOCK DATA ──
+// Colors matched to actual set logo/art palette
+const SETS = [
+  { id:'sv10',   serie:'sv',   badge:'DRI',  name:'Destined Rivals',      era:'Scarlet & Violet', icon:'⚔️', cards:244, release:2025.05, color:'#e53935', grad:'linear-gradient(135deg,#1a0000 0%,#3d0505 50%,#0d0000 100%)' },
+  { id:'sv09',   serie:'sv',   badge:'JTG',  name:'Journey Together',     era:'Scarlet & Violet', icon:'🌟', cards:190, release:2025.03, color:'#f59e0b', grad:'linear-gradient(135deg,#1a0e00 0%,#3d2200 50%,#0d0800 100%)' },
+  { id:'sv08.5', serie:'sv',   badge:'PRE',  name:'Prismatic Evolutions', era:'Scarlet & Violet', icon:'💎', cards:180, release:2025.01, color:'#e879f9', grad:'linear-gradient(135deg,#1a0028 0%,#2d0044 40%,#00201a 100%)' },
+  { id:'sv08',   serie:'sv',   badge:'SSP',  name:'Surging Sparks',       era:'Scarlet & Violet', icon:'⚡', cards:252, release:2024.11, color:'#facc15', grad:'linear-gradient(135deg,#05081a 0%,#0a1040 50%,#050810 100%)' },
+  { id:'sv07',   serie:'sv',   badge:'SCR',  name:'Stellar Crown',        era:'Scarlet & Violet', icon:'👑', cards:175, release:2024.09, color:'#2dd4bf', grad:'linear-gradient(135deg,#00101a 0%,#002830 50%,#000d14 100%)' },
+  { id:'sv04',   serie:'sv',   badge:'PAR',  name:'Paradox Rift',         era:'Scarlet & Violet', icon:'🌀', cards:266, release:2023.11, color:'#22d3ee', grad:'linear-gradient(135deg,#04001a 0%,#0a003d 40%,#001428 100%)' },
+  { id:'sv03.5', serie:'sv',   badge:'MEW',  name:'151',                  era:'Scarlet & Violet', icon:'🔴', cards:207, release:2023.09, color:'#f472b6', grad:'linear-gradient(135deg,#1a0010 0%,#3d0020 50%,#0d0008 100%)' },
+  { id:'me01',   serie:'me',   badge:'MEG',  name:'Mega Evolution',       era:'Mega Evolution',   icon:'🦋', cards:188, release:2024.12, color:'#60a5fa', grad:'linear-gradient(135deg,#000a1a 0%,#001840 50%,#001018 100%)' },
+  { id:'me02',   serie:'me',   badge:'MEF',  name:'Phantasmal Flames',    era:'Mega Evolution',   icon:'🔥', cards:130, release:2025.02, color:'#f97316', grad:'linear-gradient(135deg,#150400 0%,#300900 50%,#0a0200 100%)' },
+  { id:'me02.5', serie:'me',   badge:'ASC',  name:'Ascended Heroes',      era:'Mega Evolution',   icon:'🦸', cards:295, release:2026.01, color:'#818cf8', grad:'linear-gradient(135deg,#04041a 0%,#0c0c40 50%,#020210 100%)' },
+  { id:'me03',   serie:'me',   badge:'PEO',  name:'Perfect Order',        era:'Mega Evolution',   icon:'',   cards:124, release:2026.03, color:'#34d399', grad:'linear-gradient(135deg,#001a0e 0%,#003020 50%,#000d08 100%)' },
+  { id:'me04',   serie:'me',   badge:'CRI',  name:'Chaos Rising',         era:'Upcoming',         icon:'',   cards:122, release:2026.05, color:'#00e5ff', grad:'linear-gradient(135deg,#00101f 0%,#003344 50%,#000a12 100%)', upcoming:true, releaseDate:'May 22, 2026' },
+  { id:'swsh8',  serie:'swsh', badge:'FST',  name:'Fusion Strike',        era:'Sword & Shield',   icon:'🌊', cards:284, release:2021.11, color:'#f0abfc', grad:'linear-gradient(135deg,#150010 0%,#320028 50%,#0a0008 100%)' },
+  { id:'sm12',   serie:'sm',   badge:'CEC',  name:'Cosmic Eclipse',       era:'Sun & Moon',       icon:'🌙', cards:272, release:2019.11, color:'#34d399', grad:'linear-gradient(135deg,#00100a 0%,#003020 50%,#000510 100%)' },
+];
+
+function logoUrl(set){ return `https://assets.tcgdex.net/en/${set.serie}/${set.id}/logo.webp` }
+function symbolUrl(set){ return `https://assets.tcgdex.net/univ/${set.serie}/${set.id}/symbol.webp` }
+
+// Mock binders — varied completion
+let binders = [
+  { id:1, name:'Destined Rivals',       setId:'sv10',   owned:187, updated:'2h ago',     fav:true  },
+  { id:2, name:'Prismatic Evolutions',  setId:'sv08.5', owned:156, updated:'Yesterday',  fav:false },
+  { id:3, name:'Mega Evolution',        setId:'me01',   owned:188, updated:'3 days ago', fav:false },
+  { id:4, name:'Paradox Rift',          setId:'sv04',   owned:168, updated:'1 week ago', fav:true  },
+  { id:5, name:'Stellar Crown',         setId:'sv07',   owned:42,  updated:'2 weeks ago',fav:false },
+];
+
+let sortMode = 'recent';
+let selectedSet = null;
+let eraFilter = 'all';
+let progFilter = 'all';
+
+function getSet(id){ return SETS.find(s => s.id === id) }
+function pct(owned, total){ return total ? Math.round(owned/total*100) : 0 }
+
+function setEra(era, btn){
+  eraFilter = era;
+  document.querySelectorAll('[data-era]').forEach(b => b.classList.toggle('on', b.dataset.era === era));
+  renderBinders();
+  if(window.innerWidth <= 768) closeSidebar();
+}
+
+function setProg(prog, btn){
+  progFilter = prog;
+  document.querySelectorAll('[data-prog]').forEach(b => b.classList.toggle('on', b.dataset.prog === prog));
+  renderBinders();
+  if(window.innerWidth <= 768) closeSidebar();
+}
+
+function renderBinders(){
+  const grid = document.getElementById('bindersGrid');
+  let sorted = [...binders];
+  if(sortMode === 'name')     sorted.sort((a,b) => a.name.localeCompare(b.name));
+  if(sortMode === 'progress') sorted.sort((a,b) => {
+    const sa = getSet(a.setId), sb = getSet(b.setId);
+    return pct(b.owned, sb?.cards||1) - pct(a.owned, sa?.cards||1);
+  });
+  if(sortMode === 'newest') sorted.sort((a,b) => {
+    const sa = getSet(a.setId), sb = getSet(b.setId);
+    return (sb?.release||0) - (sa?.release||0);
+  });
+  if(sortMode === 'oldest') sorted.sort((a,b) => {
+    const sa = getSet(a.setId), sb = getSet(b.setId);
+    return (sa?.release||0) - (sb?.release||0);
+  });
+  // Favourites float to top on Recent sort
+  if(sortMode === 'recent'){
+    sorted.sort((a,b) => (b.fav ? 1 : 0) - (a.fav ? 1 : 0));
+  }
+
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  let filtered = sorted;
+
+  // Era filter
+  if(eraFilter !== 'all'){
+    filtered = filtered.filter(b => {
+      const set = getSet(b.setId);
+      return set && set.era === eraFilter;
+    });
+  }
+
+  // Progress filter
+  if(progFilter !== 'all'){
+    filtered = filtered.filter(b => {
+      if(progFilter === 'fav') return b.fav;
+      const set = getSet(b.setId);
+      if(!set) return false;
+      const p = pct(b.owned, set.cards);
+      if(progFilter === 'complete')   return p === 100;
+      if(progFilter === 'inprogress') return p > 0 && p < 100;
+      if(progFilter === 'empty')      return p === 0;
+      return true;
+    });
+  }
+
+  // Search
+  if(search) filtered = filtered.filter(b => b.name.toLowerCase().includes(search) || b.setId.includes(search));
+
+  grid.innerHTML = '';
+
+  // New binder card
+  const newCard = document.createElement('div');
+  newCard.className = 'binder-new';
+  newCard.onclick = openModal;
+  const dotColors = ['#e53935','#facc15','#2dd4bf','#e879f9','#f97316','#818cf8'];
+  newCard.innerHTML = `
+    <div class="binder-new-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+    </div>
+    <div class="binder-new-label">Create new binder</div>
+    <div class="binder-new-sub">Pick a set and start tracking<br>your collection</div>
+    <div class="binder-new-sets">
+      ${dotColors.map(c=>`<div class="binder-new-dot" style="background:${c}"></div>`).join('')}
+    </div>`;
+  grid.appendChild(newCard);
+
+  filtered.forEach(b => {
+    const set = getSet(b.setId);
+    if(!set) return;
+    const p = pct(b.owned, set.cards);
+    const circ = 2 * Math.PI * 14;
+    const offset = circ - (p/100) * circ;
+
+    const card = document.createElement('a');
+    card.className = 'binder-card';
+    card.dataset.id = b.id;
+    card.dataset.fav = b.fav ? '1' : '0';
+    card.href = b.setId === 'me03'
+      ? 'coasties-binder-setview-me03.html'
+      : `coasties-binder-setview.html?set=${b.setId}`;
+    card.innerHTML = `
+      <div class="binder-cover" style="background:${set.grad}">
+        <div style="position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 80% 70% at 50% 55%,${set.color}30,transparent 70%);pointer-events:none"></div>
+        <div style="position:absolute;inset:0;z-index:2;background:radial-gradient(ellipse 90% 90% at 50% 50%,transparent 25%,rgba(0,0,0,0.55) 100%);pointer-events:none"></div>
+        <img class="binder-cover-logo"
+          src="${logoUrl(set)}"
+          alt="${set.name}"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="binder-cover-icon" style="display:none">${set.icon}</div>
+        <div class="binder-cover-badge">${set.badge}</div>
+        <div class="binder-cover-pct">
+          <svg class="pct-ring" width="36" height="36" viewBox="0 0 36 36">
+            <circle class="pct-bg" cx="18" cy="18" r="14"/>
+            <circle class="pct-fill" cx="18" cy="18" r="14"
+              stroke="${set.color}"
+              stroke-dasharray="${circ}"
+              stroke-dashoffset="${offset}"/>
+          </svg>
+          <div class="pct-label">${p}%</div>
+        </div>
+        <!-- Fav star on cover -->
+        <div class="binder-cover-fav">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="rarity-strip" style="background:linear-gradient(90deg,transparent,${set.color}cc 40%,${set.color} 60%,transparent)"></div>
+      </div>
+      <div class="binder-body">
+        <div class="binder-info">
+          <div class="binder-name">${b.name}</div>
+          <div class="binder-set-id">${set.era} · ${set.cards} cards</div>
+        </div>
+        <div class="binder-prog">
+          <div class="binder-prog-bar">
+            <div class="binder-prog-fill" style="width:${p}%;background:linear-gradient(90deg,${set.color}aa,${set.color})"></div>
+          </div>
+          <div class="binder-prog-row">
+            <span class="binder-owned"><strong>${b.owned}</strong> owned</span>
+            <span class="binder-total">${set.cards - b.owned} missing</span>
+          </div>
+        </div>
+        <div class="binder-footer">
+          <span class="binder-updated">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            ${b.updated}
+          </span>
+          <div class="binder-actions" onclick="event.preventDefault();event.stopPropagation()">
+            <button class="action-btn fav-btn${b.fav?' favourited':''}" title="${b.fav?'Unfavourite':'Favourite'}" onclick="toggleFav(${b.id})">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="${b.fav?'#fbbf24':'none'}" stroke="${b.fav?'#fbbf24':'currentColor'}" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </button>
+            <button class="action-btn" title="Rename" onclick="renameBinder(${b.id})">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="action-btn danger" title="Delete" onclick="deleteBinder(${b.id})">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+  updateStats();
+}
+
+function toggleFav(id){
+  id = Number(id);
+  const b = binders.find(x => x.id === id);
+  if(!b) return;
+  b.fav = !b.fav;
+  renderBinders();
+  showToast(b.fav ? '⭐ Added to favourites' : 'Removed from favourites', b.fav ? 'a' : 'r');
+}
+
+function setView(mode, btn){
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const grid = document.getElementById('bindersGrid');
+  grid.classList.toggle('list-view', mode === 'list');
+}
+
+function setSort(mode, btn){
+  sortMode = mode;
+  document.querySelectorAll('[data-sort]').forEach(b => b.classList.toggle('on', b.dataset.sort === mode));
+  renderBinders();
+}
+
+// ── MODAL ──
+function openModal(){
+  document.getElementById('binderNameInput').value = '';
+  document.getElementById('setSearchInput').value = '';
+  selectedSet = null;
+  renderSetPicker();
+  document.getElementById('modalBackdrop').classList.add('open');
+  if(window.innerWidth > 768){
+    setTimeout(() => document.getElementById('setSearchInput').focus(), 200);
+  }
+}
+function closeModal(){ document.getElementById('modalBackdrop').classList.remove('open') }
+function closeModalOutside(e){ if(e.target === document.getElementById('modalBackdrop')) closeModal() }
+
+function renderSetPicker(search=''){
+  const wrap = document.getElementById('setGridWrap');
+  const q = search.toLowerCase();
+  const filtered = SETS.filter(s =>
+    !q || s.name.toLowerCase().includes(q) || s.era.toLowerCase().includes(q) || s.badge.toLowerCase().includes(q)
+  );
+
+  if(!filtered.length){
+    wrap.innerHTML = `<div class="modal-no-results">No sets match "${search}"</div>`;
+    return;
+  }
+
+  const usedSetIds = new Set(binders.map(b => b.setId));
+
+  // Era display order — newest era first
+  const eraOrder = ['Upcoming','Mega Evolution','Scarlet & Violet','Sword & Shield','Sun & Moon'];
+  const eras = eraOrder.filter(e => filtered.some(s => s.era === e));
+
+  wrap.innerHTML = eras.map(era => {
+    const sets = filtered.filter(s => s.era === era);
+    return `
+      <div class="set-era-label">
+        <span class="set-era-label-text">${era}</span>
+        <div class="set-era-label-line"></div>
+      </div>
+      <div class="set-grid">
+        ${sets.map(s => {
+          const used = usedSetIds.has(s.id);
+          const upcoming = !!s.upcoming;
+          const clickable = !used && !upcoming;
+          return `
+          <div class="set-card${selectedSet===s.id?' selected':''}${used?' used':''}${upcoming?' upcoming':''}" ${upcoming?`style="border-color:${s.color}44"`:''} ${clickable?`onclick="selectSet('${s.id}',this)"`:''}>
+            <div class="set-card-cover" style="background:${s.grad}">
+              <div style="position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 80% 70% at 50% 55%,${s.color}28,transparent 70%)"></div>
+              <div style="position:absolute;inset:0;z-index:2;background:radial-gradient(ellipse 90% 90% at 50% 50%,transparent 30%,rgba(0,0,0,0.5) 100%)"></div>
+              <img class="set-card-logo" src="${logoUrl(s)}" alt="${s.name}"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+              <div class="set-card-icon" style="display:none">${s.icon}</div>
+              <div class="set-card-badge">${s.badge}</div>
+              ${!used && !upcoming ? `
+              <div class="set-card-check">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>` : ''}
+            </div>
+            ${used ? `
+            <div class="set-card-used-overlay">
+              <div class="set-card-used-pill">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Tracking</span>
+              </div>
+            </div>` : ''}
+            <div class="set-card-body">
+              <div class="set-card-name">${s.name}</div>
+              <div class="set-card-meta">${upcoming ? '120+ cards' : s.cards+' cards'}</div>
+              ${upcoming ? `<div class="set-card-release" style="background:linear-gradient(90deg,${s.color},${s.color}88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${s.releaseDate}</div>` : ''}
+              <div class="set-card-strip" style="background:linear-gradient(90deg,${s.color}88,${s.color})"></div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+  }).join('');
+}
+
+function filterSets(){
+  const q = document.getElementById('setSearchInput').value;
+  renderSetPicker(q);
+}
+
+function selectSet(id, el){
+  selectedSet = id;
+  // Re-render to update selected state cleanly
+  const q = document.getElementById('setSearchInput').value;
+  renderSetPicker(q);
+  // Auto-fill name if empty
+  const input = document.getElementById('binderNameInput');
+  if(!input.value){ input.value = SETS.find(s=>s.id===id)?.name || ''; }
+}
+
+function createBinder(){
+  const name = document.getElementById('binderNameInput').value.trim();
+  if(!name){ document.getElementById('binderNameInput').focus(); return; }
+  if(!selectedSet){ showToast('Please select a set', 'r'); return; }
+  const set = getSet(selectedSet);
+  if(set?.upcoming){ showToast(`${set.name} isn't out yet!`, 'r'); return; }
+  if(binders.some(b => b.setId === selectedSet)){
+    showToast(`You already have a ${set.name} binder`, 'r');
+    return;
+  }
+  binders.unshift({ id: Date.now(), name, setId: selectedSet, owned: 0, updated: 'Just now', fav: false });
+  closeModal();
+  renderBinders();
+  showToast(`"${name}" binder created!`, 'a');
+}
+
+function deleteBinder(id){
+  id = Number(id);
+  const card = document.querySelector(`.binder-card[data-id="${id}"]`);
+  if(!card) return;
+  if(card.classList.contains('confirm-delete')){
+    const b = binders.find(x => x.id === id);
+    binders = binders.filter(x => x.id !== id);
+    renderBinders();
+    showToast(`"${b.name}" deleted`, 'r');
+    return;
+  }
+  card.classList.add('confirm-delete');
+  const actions = card.querySelector('.binder-actions');
+  actions.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:10px;color:#ef4444;font-weight:600;white-space:nowrap;line-height:1">Delete?</span>
+      <div style="display:flex;gap:4px">
+        <button class="confirm-yes" onclick="event.preventDefault();event.stopPropagation();deleteBinder(${id})">Yes</button>
+        <button class="confirm-no" onclick="event.preventDefault();event.stopPropagation();cancelDelete(${id})">No</button>
+      </div>
+    </div>`;
+}
+
+function cancelDelete(id){
+  id = Number(id);
+  const card = document.querySelector(`.binder-card[data-id="${id}"]`);
+  if(!card) return;
+  card.classList.remove('confirm-delete');
+  renderBinders();
+}
+
+let renameTargetId = null;
+function renameBinder(id){
+  id = Number(id);
+  const b = binders.find(x => x.id === id);
+  if(!b) return;
+  renameTargetId = id;
+  document.getElementById('renameInput').value = b.name;
+  document.getElementById('renameBackdrop').classList.add('open');
+  setTimeout(() => document.getElementById('renameInput').select(), 200);
+}
+function closeRename(){ document.getElementById('renameBackdrop').classList.remove('open'); renameTargetId = null; }
+function closeRenameOutside(e){ if(e.target === document.getElementById('renameBackdrop')) closeRename(); }
+function confirmRename(){
+  const b = binders.find(x => x.id === renameTargetId);
+  const newName = document.getElementById('renameInput').value.trim();
+  if(!b || !newName) return;
+  b.name = newName;
+  closeRename();
+  renderBinders();
+  showToast('Binder renamed', 'a');
+}
+document.getElementById('renameInput').addEventListener('keydown', e => { if(e.key==='Enter') confirmRename(); if(e.key==='Escape') closeRename(); });
+
+function updateStats(){
+  const totalOwned = binders.reduce((s,b) => { const set=getSet(b.setId); return s + (set ? Math.min(b.owned, set.cards) : 0); }, 0);
+  const totalCards = binders.reduce((s,b) => { const set=getSet(b.setId); return s + (set ? set.cards : 0); }, 0);
+  const overallPct = totalCards ? Math.round(totalOwned/totalCards*100) : 0;
+  document.getElementById('statBinders').textContent = binders.length;
+  document.getElementById('statOwned').textContent = totalOwned.toLocaleString();
+  document.getElementById('statTotal').textContent = totalCards.toLocaleString();
+  document.getElementById('statPct').textContent = overallPct + '%';
+  document.getElementById('statBar').style.width = overallPct + '%';
+}
+
+// Search
+document.getElementById('searchInput').addEventListener('input', renderBinders);
+
+// Mobile menu
+function toggleMenu(){
+  const menu = document.getElementById('mobileMenu');
+  const backdrop = document.getElementById('menuBackdrop');
+  const isOpen = menu.classList.contains('open');
+  if(isOpen){ closeMenu(); }
+  else { menu.classList.add('open'); backdrop.classList.add('open'); }
+}
+function closeMenu(){
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('menuBackdrop').classList.remove('open');
+}
+
+// Sidebar drawer (mobile)
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarBackdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarBackdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Toast
+let toastTimer;
+function showToast(msg, type){
+  document.getElementById('ttxt').textContent = msg;
+  document.getElementById('tdot').className = 'tdot ' + type;
+  const t = document.getElementById('toast');
+  t.classList.add('show'); clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// Init
+renderBinders();
+</script>
+</body>
+</html>

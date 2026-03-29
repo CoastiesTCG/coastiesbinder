@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoastiesBinder — Changelog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#020209;--surface:#080818;--surface2:#0d0c22;
+  --border:#141230;--border2:#1e1c40;
+  --violet:#7c3aed;--violet2:#6d28d9;--violet-hi:#8b5cf6;
+  --lavender:#c4b5fd;--pink:#ec4899;--green:#34d399;
+  --amber:#f59e0b;--blue:#60a5fa;
+  --text:#ddd8f8;--text2:#9d96cc;--muted:#3a3660;
+  --trans:0.15s ease;
+}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden;min-height:100dvh}
+
+/* NAV */
+.nav{height:64px;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(2,2,9,0.95);backdrop-filter:blur(24px);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:center}
+.nav-inner{display:flex;align-items:center;width:100%;max-width:1280px;padding:0 32px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;margin-right:auto}
+.logo-mark{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--violet),var(--violet2));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(124,58,237,0.4)}
+.logo-divider{width:1px;height:26px;background:rgba(255,255,255,0.1);margin:0 4px}
+.logo-text{display:flex;flex-direction:column;line-height:1;gap:2px}
+.logo-title{font-family:'Bebas Neue',sans-serif;font-size:16px;color:#fff;letter-spacing:0.04em}
+.logo-sub{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase}
+.nav-links{display:flex;gap:2px;margin-right:16px}
+.nav-links a{font-size:12px;color:var(--muted);text-decoration:none;font-weight:500;padding:5px 10px;border-radius:6px;transition:all var(--trans)}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+.nav-links a.active{color:var(--lavender);background:rgba(124,58,237,0.08)}
+.nav-right{display:flex;gap:6px}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.08);color:var(--text2);padding:6px 12px;border-radius:7px;font-size:12px;font-weight:500;text-decoration:none;display:inline-flex;align-items:center;transition:all var(--trans)}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.18);color:var(--text)}
+.btn-violet{background:linear-gradient(135deg,var(--violet),var(--violet2));color:#fff;padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;border:none;font-family:inherit;box-shadow:0 2px 12px rgba(124,58,237,0.35);text-decoration:none;display:inline-flex;align-items:center}
+
+/* PAGE */
+.page{max-width:820px;margin:0 auto;padding:64px 32px 120px}
+
+/* HERO */
+.hero{margin-bottom:56px;animation:fade-up 0.4s ease both}
+.hero-eyebrow{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:var(--violet-hi);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.hero-eyebrow::before{content:'';width:20px;height:1px;background:var(--violet-hi)}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,7vw,80px);letter-spacing:0.02em;color:#fff;line-height:1;margin-bottom:10px}
+.hero-sub{font-size:15px;color:var(--text2);font-weight:300;line-height:1.6}
+
+/* FEED */
+.feed{display:flex;flex-direction:column;gap:8px;animation:fade-up 0.4s 0.1s ease both}
+
+/* MAJOR RELEASE */
+.major{
+  background:var(--surface);
+  border:1px solid rgba(124,58,237,0.25);
+  border-radius:16px;overflow:hidden;
+  transition:border-color 0.2s;
+}
+.major:hover{border-color:rgba(124,58,237,0.4)}
+.major-head{
+  background:linear-gradient(90deg,rgba(124,58,237,0.14) 0%,rgba(124,58,237,0.03) 60%,transparent 100%);
+  border-bottom:1px solid rgba(124,58,237,0.15);
+  padding:22px 28px;
+  display:flex;align-items:center;gap:20px;
+  cursor:pointer;user-select:none;
+  transition:background 0.15s;
+}
+.major-head:hover{background:linear-gradient(90deg,rgba(124,58,237,0.18) 0%,rgba(124,58,237,0.05) 60%,transparent 100%)}
+.major-version{font-family:'Outfit',sans-serif;font-size:38px;font-weight:900;letter-spacing:-0.02em;color:#fff;line-height:1;flex-shrink:0;}
+.latest-pill{
+  font-family:'Space Mono',monospace;font-size:7px;font-weight:700;
+  letter-spacing:0.12em;text-transform:uppercase;
+  background:linear-gradient(135deg,var(--violet),var(--violet-hi));
+  color:#fff;padding:3px 9px;border-radius:20px;
+  box-shadow:0 1px 10px rgba(124,58,237,0.5);
+  margin-left:10px;vertical-align:middle;
+  position:relative;top:-6px;
+}
+.major-tag{
+  font-family:'Space Mono',monospace;font-size:8px;font-weight:700;
+  letter-spacing:0.16em;text-transform:uppercase;
+  background:linear-gradient(135deg,var(--violet),var(--violet-hi));
+  color:#fff;padding:4px 12px;border-radius:20px;
+  flex-shrink:0;box-shadow:0 2px 10px rgba(124,58,237,0.3);
+}
+.major-meta{flex:1;min-width:0}
+.major-date{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;letter-spacing:0.08em}
+.major-summary{font-size:14px;color:var(--text2)}
+.major-chevron{color:var(--muted);transition:transform 0.25s ease,color 0.15s;flex-shrink:0}
+.major.open .major-chevron{transform:rotate(180deg);color:var(--text2)}
+.major-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease}
+.major.open .major-body{max-height:3000px}
+.major-body-inner{padding:4px 28px 24px;border-top:1px solid rgba(124,58,237,0.1)}
+
+/* PATCH RELEASES */
+.patches{display:flex;flex-direction:column;gap:6px;margin-left:28px}
+.patch{
+  background:rgba(8,8,24,0.8);
+  border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;
+  transition:border-color 0.15s;
+}
+.patch:hover{border-color:var(--border2)}
+.patch-head{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 20px;cursor:pointer;
+  transition:background 0.15s;user-select:none;
+}
+.patch-head:hover{background:rgba(255,255,255,0.02)}
+.patch-version{font-family:'Outfit',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.01em;color:var(--text2);line-height:1;flex-shrink:0;}
+.patch-tag{
+  font-family:'Space Mono',monospace;font-size:7px;font-weight:700;
+  letter-spacing:0.14em;text-transform:uppercase;
+  background:rgba(255,255,255,0.04);color:var(--muted);
+  padding:3px 8px;border-radius:4px;border:1px solid var(--border);
+  flex-shrink:0;
+}
+.patch-meta{flex:1;min-width:0}
+.patch-date{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:2px;letter-spacing:0.06em}
+.patch-summary{font-size:13px;color:var(--text2)}
+.patch-chevron{color:var(--muted);transition:transform 0.2s ease;flex-shrink:0}
+.patch.open .patch-chevron{transform:rotate(180deg);color:var(--text2)}
+.patch-body{max-height:0;overflow:hidden;transition:max-height 0.3s ease}
+.patch.open .patch-body{max-height:2000px}
+.patch-body-inner{padding:4px 20px 18px;border-top:1px solid var(--border)}
+
+/* CHANGELOG CONTENT */
+.cl-section{margin-top:18px}
+.cl-label{
+  font-family:'Space Mono',monospace;font-size:9px;font-weight:700;
+  letter-spacing:0.14em;text-transform:uppercase;
+  margin-bottom:10px;display:flex;align-items:center;gap:10px;
+}
+.cl-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.s-added .cl-label{color:var(--green)}
+.s-fixed .cl-label{color:var(--blue)}
+.s-changed .cl-label{color:var(--amber)}
+.s-removed .cl-label{color:#f87171}
+.cl-item{
+  display:flex;gap:10px;align-items:baseline;
+  padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);
+  font-size:13px;color:var(--text2);line-height:1.55;
+}
+.cl-item:last-child{border-bottom:none}
+.cl-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:9px}
+.s-added .cl-dot{background:var(--green)}
+.s-fixed .cl-dot{background:var(--blue)}
+.s-changed .cl-dot{background:var(--amber)}
+.s-removed .cl-dot{background:#f87171}
+.cl-item strong{color:var(--text);font-weight:600}
+
+@keyframes fade-up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* MOBILE */
+@media(max-width:768px){
+  .page{padding:40px 16px 80px}
+  .nav-inner{padding:0 16px}
+  .nav-links,.nav-right .btn-ghost{display:none}
+  .major-head{padding:18px 20px;gap:14px}
+  .major-version{font-family:'Outfit',sans-serif;font-size:38px;font-weight:900;letter-spacing:-0.02em;color:#fff;line-height:1;flex-shrink:0;}
+  .major-body-inner{padding:4px 20px 20px}
+  .patches{margin-left:12px}
+  .patch-head{padding:12px 16px}
+  .patch-body-inner{padding:4px 16px 16px}
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="homepage-f.html" class="logo">
+      <div class="logo-mark"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+      <div class="logo-divider"></div>
+      <div class="logo-text"><span class="logo-title">CoastiesBinder</span><span class="logo-sub">Pokémon Tracker</span></div>
+    </a>
+    <div class="nav-links">
+      <a href="homepage-f.html">Home</a>
+      <a href="coasties-binder-mybinders.html">My Binders</a>
+      <a href="coasties-binder-plans.html">Plans</a>
+      <a href="#" class="active">Changelog</a>
+    </div>
+    <div class="nav-right">
+      <a href="coasties-binder-login.html" class="btn-ghost">Log in</a>
+      <a href="coasties-binder-login.html" class="btn-violet">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="hero">
+    <div class="hero-eyebrow">What's new</div>
+    <h1 class="hero-title">Changelog</h1>
+    <p class="hero-sub">Every update to CoastiesBinder — new sets, features, fixes, and changes.</p>
+  </div>
+
+  <div class="feed">
+
+    <!-- v0.3 MAJOR -->
+    <div class="major open">
+      <div class="major-head" onclick="this.closest('.major').classList.toggle('open')">
+        <div class="major-version">v0.3<span class="latest-pill">Latest</span></div>
+        <div class="major-tag">Major</div>
+        <div class="major-meta">
+          <div class="major-date">Mar 2026</div>
+          <div class="major-summary">Upcoming sets, favourites &amp; create binder rebuild</div>
+        </div>
+        <svg class="major-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="major-body"><div class="major-body-inner">
+        <div class="cl-section s-added"><div class="cl-label">Added</div>
+          <div class="cl-item"><span class="cl-dot"></span><span><strong>Perfect Order (ME03)</strong> to upcoming sets — releasing March 27, 120+ cards</span></div>
+          <div class="cl-item"><span class="cl-dot"></span><span><strong>Chaos Rising (ME04)</strong> to upcoming sets — releasing May 22, 122 cards</span></div>
+          <div class="cl-item"><span class="cl-dot"></span><span><strong>Favourites system</strong> — star binders to pin them, gold star on cover, floats to top in Recent sort, new sidebar filter</span></div>
+          <div class="cl-item"><span class="cl-dot"></span><span><strong>Upcoming section</strong> in create binder modal with dashed border, Coming Soon stamp, and release date</span></div>
+          <div class="cl-item"><span class="cl-dot"></span><span><strong>Sort by Newest / Oldest set</strong> — sorts by actual set release date</span></div>
+        </div>
+        <div class="cl-section s-changed"><div class="cl-label">Changed</div>
+          <div class="cl-item"><span class="cl-dot"></span><span><strong>Create binder modal</strong> completely rebuilt — sets are cards with logos and gradient covers, grouped by era, live search, duplicate prevention</span></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- v0.2.1 PATCH -->
+    <div class="patches">
+      <div class="patch">
+        <div class="patch-head" onclick="this.closest('.patch').classList.toggle('open')">
+          <div class="patch-version">v0.2.1</div>
+          <div class="patch-tag">Patch</div>
+          <div class="patch-meta">
+            <div class="patch-date">Feb 2026</div>
+            <div class="patch-summary">Mobile support, plans page &amp; login</div>
+          </div>
+          <svg class="patch-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="patch-body"><div class="patch-body-inner">
+          <div class="cl-section s-added"><div class="cl-label">Added</div>
+            <div class="cl-item"><span class="cl-dot"></span><span><strong>Plans page</strong> — Free, Collector, Master tiers with billing toggle and FAQ accordion</span></div>
+            <div class="cl-item"><span class="cl-dot"></span><span><strong>Login &amp; sign up page</strong> — split-screen layout, inline validation, loading state and success redirect</span></div>
+            <div class="cl-item"><span class="cl-dot"></span><span><strong>Bottom action bar on mobile</strong> — Filter, Mark all owned, Buy missing always accessible in set view</span></div>
+          </div>
+          <div class="cl-section s-changed"><div class="cl-label">Changed</div>
+            <div class="cl-item"><span class="cl-dot"></span><span><strong>Sidebar</strong> becomes a slide-up drawer on mobile with drag handle and backdrop</span></div>
+            <div class="cl-item"><span class="cl-dot"></span><span><strong>Set view</strong> shows single page on mobile, swipe left/right to turn pages</span></div>
+            <div class="cl-item"><span class="cl-dot"></span><span><strong>Nav</strong> collapses to hamburger on mobile across all pages</span></div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- v0.2 MAJOR -->
+    <div class="major">
+      <div class="major-head" onclick="this.closest('.major').classList.toggle('open')">
+        <div class="major-version">v0.2</div>
+        <div class="major-tag">Major</div>
+        <div class="major-meta">
+          <div class="major-date">Jan 2026</div>
+          <div class="major-summary">My Binders overhaul &amp; bug fixes</div>
+        </div>
+        <svg class="major-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="major-body"><div class="major-body-inner">
+        <div class="cl-section s-added"><div class="cl-label">Added</div>
+          <div class="cl-item"><span class="cl-dot"></span><span><strong>My Binders page</strong> — binder cards with TCGdex set logos, gradient covers, completion ring, era filtering, grid/list view, sticky stats sidebar</span></div>
+          <div class="cl-item"><span class="cl-dot"></span><span><strong>Rename modal</strong> — proper inline modal replacing native browser prompt(). Pre-fills name, Enter confirms, Escape cancels</span></div>
+        </div>
+        <div class="cl-section s-fixed"><div class="cl-label">Fixed</div>
+          <div class="cl-item"><span class="cl-dot"></span><span><strong>Sidebar stats</strong> not updating after binder deletion — type coercion bug comparing IDs as strings vs numbers</span></div>
+          <div class="cl-item"><span class="cl-dot"></span><span><strong>Delete confirmation</strong> persisting after cancelling — state not being reset correctly</span></div>
+        </div>
+        <div class="cl-section s-changed"><div class="cl-label">Changed</div>
+          <div class="cl-item"><span class="cl-dot"></span><span><strong>Set view</strong> colour tokens aligned to My Binders — bg, surface, border, muted all unified</span></div>
+          <div class="cl-item"><span class="cl-dot"></span><span><strong>Set header</strong> now shows the real TCGdex logo instead of an emoji, expanded to 1280px max-width</span></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- v0.1.2 + v0.1.1 PATCHES -->
+    <div class="patches">
+      <div class="patch">
+        <div class="patch-head" onclick="this.closest('.patch').classList.toggle('open')">
+          <div class="patch-version">v0.1.2</div>
+          <div class="patch-tag">Patch</div>
+          <div class="patch-meta">
+            <div class="patch-date">Mar 2025</div>
+            <div class="patch-summary">Binder themes, pocket modes &amp; new sets</div>
+          </div>
+          <svg class="patch-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="patch-body"><div class="patch-body-inner">
+          <div class="cl-section s-added"><div class="cl-label">Added</div>
+            <div class="cl-item"><span class="cl-dot"></span><span><strong>Destined Rivals (SV10)</strong> — 244 cards, added on release day</span></div>
+            <div class="cl-item"><span class="cl-dot"></span><span><strong>Journey Together (SV09)</strong> — 190 cards, added on release day</span></div>
+            <div class="cl-item"><span class="cl-dot"></span><span><strong>8 binder colour themes</strong> — Midnight, Obsidian, Crimson, Ocean, Forest, Gold, Rose, Arctic</span></div>
+            <div class="cl-item"><span class="cl-dot"></span><span><strong>4 pocket modes</strong> — 2×2, 3×3, 4×3, 4×4 with dynamic card sizing</span></div>
+          </div>
+        </div></div>
+      </div>
+      <div class="patch">
+        <div class="patch-head" onclick="this.closest('.patch').classList.toggle('open')">
+          <div class="patch-version">v0.1.1</div>
+          <div class="patch-tag">Patch</div>
+          <div class="patch-meta">
+            <div class="patch-date">Jan 2025</div>
+            <div class="patch-summary">Homepage redesign &amp; Prismatic Evolutions</div>
+          </div>
+          <svg class="patch-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="patch-body"><div class="patch-body-inner">
+          <div class="cl-section s-added"><div class="cl-label">Added</div>
+            <div class="cl-item"><span class="cl-dot"></span><span><strong>Prismatic Evolutions (SV08.5)</strong> — 180 cards, added on release day</span></div>
+            <div class="cl-item"><span class="cl-dot"></span><span><strong>Homepage redesign (Concept F)</strong> — perspective grid floor, glitch title, floating set tags, neon stats bar</span></div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- v0.1 MAJOR -->
+    <div class="major">
+      <div class="major-head" onclick="this.closest('.major').classList.toggle('open')">
+        <div class="major-version">v0.1</div>
+        <div class="major-tag">Major</div>
+        <div class="major-meta">
+          <div class="major-date">Nov 2024</div>
+          <div class="major-summary">Initial prototype</div>
+        </div>
+        <svg class="major-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="major-body"><div class="major-body-inner">
+        <div class="cl-section s-added"><div class="cl-label">Added</div>
+          <div class="cl-item"><span class="cl-dot"></span><span><strong>Set view</strong> with live TCGdex data, binder spread layout, page flip animation, keyboard navigation</span></div>
+          <div class="cl-item"><span class="cl-dot"></span><span><strong>Rarity colour system</strong> — 8 tiers from Common to Hyper Rare, animated shimmer on UR/SIR/HR</span></div>
+          <div class="cl-item"><span class="cl-dot"></span><span><strong>Click to toggle ownership</strong> — owned cards show full art with rarity border glow, missing cards desaturated with dashed border</span></div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

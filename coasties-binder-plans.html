@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoastiesBinder — Plans</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#020209;--surface:#080818;--surface2:#0d0c22;
+  --border:#141230;--border2:#1e1c40;
+  --violet:#7c3aed;--violet2:#6d28d9;--violet-hi:#8b5cf6;
+  --lavender:#c4b5fd;
+  --pink:#ec4899;--cyan:#22d3ee;--green:#34d399;
+  --gold:#f59e0b;--gold2:#fbbf24;
+  --text:#ddd8f8;--text2:#9d96cc;--muted:#3a3660;
+  --trans:0.15s ease;
+}
+html{scroll-behavior:smooth;scrollbar-gutter:stable}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden;min-height:100dvh}
+
+/* ── GRID FLOOR ── */
+.grid-floor{
+  position:fixed;bottom:0;left:0;right:0;height:50vh;
+  pointer-events:none;z-index:0;overflow:hidden;
+}
+.grid-floor::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(124,58,237,0.12) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(124,58,237,0.12) 1px,transparent 1px);
+  background-size:50px 50px;
+  transform:perspective(350px) rotateX(65deg) scale(2.2);
+  transform-origin:bottom center;
+  mask-image:linear-gradient(to bottom,transparent 0%,black 60%);
+}
+.grid-floor::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(139,92,246,0.8) 20%,rgba(236,72,153,0.7) 50%,rgba(34,211,238,0.7) 80%,transparent);
+  box-shadow:0 0 24px 3px rgba(139,92,246,0.4),0 0 60px 8px rgba(124,58,237,0.15);
+}
+
+/* ── NAV ── */
+.nav{
+  height:64px;border-bottom:1px solid rgba(255,255,255,0.06);
+  background:rgba(2,2,9,0.95);backdrop-filter:blur(24px);
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;
+}
+.nav-inner{display:flex;align-items:center;width:100%;max-width:1280px;padding:0 32px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;margin-right:auto}
+.logo-mark{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--violet),var(--violet2));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(124,58,237,0.4)}
+.logo-divider{width:1px;height:26px;background:rgba(255,255,255,0.1);margin:0 4px}
+.logo-text{display:flex;flex-direction:column;line-height:1;gap:2px}
+.logo-title{font-family:'Bebas Neue',sans-serif;font-size:16px;color:#fff;letter-spacing:0.04em}
+.logo-sub{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase}
+.nav-links{display:flex;gap:2px;margin-right:16px}
+.nav-links a{font-size:12px;color:var(--muted);text-decoration:none;font-weight:500;padding:5px 10px;border-radius:6px;transition:all var(--trans)}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+.nav-links a.active{color:var(--lavender);background:rgba(124,58,237,0.08)}
+.nav-right{display:flex;gap:6px;align-items:center}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.08);color:var(--text2);padding:6px 12px;border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit;transition:all var(--trans);font-weight:500;text-decoration:none;display:inline-flex;align-items:center}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.18);color:var(--text)}
+.btn-violet{background:linear-gradient(135deg,var(--violet),var(--violet2));color:#fff;padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;box-shadow:0 2px 12px rgba(124,58,237,0.35);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn-violet:hover{box-shadow:0 4px 20px rgba(124,58,237,0.5);transform:translateY(-1px)}
+
+/* ── PAGE ── */
+.page{max-width:1280px;margin:0 auto;padding:80px 32px 120px;position:relative;z-index:1}
+
+/* ── HERO ── */
+.hero{text-align:center;margin-bottom:80px}
+.hero-eyebrow{
+  font-family:'Space Mono',monospace;font-size:10px;font-weight:700;
+  color:var(--violet-hi);letter-spacing:0.22em;text-transform:uppercase;
+  margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:10px;
+  animation:fade-up 0.4s ease both;
+}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';width:32px;height:1px;background:linear-gradient(90deg,transparent,var(--violet-hi))}
+.hero-eyebrow::after{background:linear-gradient(90deg,var(--violet-hi),transparent)}
+.hero-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(52px,7vw,96px);
+  line-height:0.88;letter-spacing:0.02em;color:#fff;
+  margin-bottom:20px;
+  animation:fade-up 0.4s 0.06s ease both;
+}
+.hero-title span{
+  background:linear-gradient(135deg,var(--cyan) 0%,var(--violet-hi) 45%,var(--pink) 90%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{
+  font-size:16px;color:var(--text2);max-width:480px;margin:0 auto 36px;
+  line-height:1.7;font-weight:300;
+  animation:fade-up 0.4s 0.12s ease both;
+}
+
+/* ── BILLING TOGGLE ── */
+.billing-toggle{
+  display:inline-flex;align-items:center;gap:0;
+  background:rgba(255,255,255,0.03);border:1px solid var(--border2);
+  border-radius:10px;padding:3px;
+  animation:fade-up 0.4s 0.18s ease both;
+}
+.bt-btn{
+  padding:8px 20px;border-radius:7px;font-size:12px;font-weight:600;
+  font-family:inherit;cursor:pointer;border:none;background:transparent;
+  color:var(--muted);transition:all 0.2s;
+}
+.bt-btn.active{
+  background:linear-gradient(135deg,var(--violet),var(--violet2));
+  color:#fff;box-shadow:0 2px 8px rgba(124,58,237,0.4);
+}
+.bt-btn:not(.active):hover{color:var(--text2)}
+.save-badge{
+  background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.25);
+  color:var(--green);font-size:9px;font-weight:700;letter-spacing:0.08em;
+  text-transform:uppercase;padding:2px 7px;border-radius:20px;
+  font-family:'Space Mono',monospace;margin-left:8px;
+}
+
+/* ── PLANS GRID ── */
+.plans{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:20px;align-items:start;
+  animation:fade-up 0.4s 0.24s ease both;
+}
+
+/* ── PLAN CARD ── */
+.plan{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:20px;padding:32px 28px;
+  position:relative;overflow:hidden;
+  transition:transform 0.2s,box-shadow 0.2s;
+}
+.plan:hover{transform:translateY(-4px)}
+
+/* Shimmer top line */
+.plan::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);
+  transition:background 0.3s;
+}
+
+/* ── FREE PLAN ── */
+.plan-free{}
+.plan-free:hover{box-shadow:0 16px 48px rgba(0,0,0,0.3)}
+
+/* ── COLLECTOR PLAN ── */
+.plan-collector{
+  border-color:rgba(124,58,237,0.35);
+  background:linear-gradient(160deg,rgba(124,58,237,0.06) 0%,var(--surface) 50%);
+  box-shadow:0 0 0 1px rgba(124,58,237,0.1);
+}
+.plan-collector::before{
+  background:linear-gradient(90deg,transparent,rgba(124,58,237,0.5) 30%,rgba(196,181,253,0.4) 60%,transparent);
+}
+.plan-collector:hover{box-shadow:0 16px 48px rgba(124,58,237,0.2),0 0 0 1px rgba(124,58,237,0.25)}
+
+/* ── MASTER PLAN — gold ── */
+.plan-master{
+  border-color:rgba(245,158,11,0.3);
+  background:linear-gradient(160deg,rgba(245,158,11,0.06) 0%,rgba(251,191,36,0.02) 40%,var(--surface) 70%);
+  box-shadow:0 0 0 1px rgba(245,158,11,0.08);
+}
+.plan-master::before{
+  background:linear-gradient(90deg,transparent,rgba(245,158,11,0.5) 30%,rgba(251,191,36,0.5) 60%,transparent);
+}
+.plan-master:hover{box-shadow:0 16px 48px rgba(245,158,11,0.15),0 0 0 1px rgba(245,158,11,0.25)}
+
+/* Popular badge */
+.popular-badge{
+  position:absolute;top:20px;right:20px;
+  background:linear-gradient(135deg,var(--violet),var(--violet2));
+  color:#fff;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  padding:4px 10px;border-radius:20px;font-family:'Space Mono',monospace;
+  box-shadow:0 2px 12px rgba(124,58,237,0.4);
+}
+.master-badge{
+  position:absolute;top:20px;right:20px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  padding:4px 10px;border-radius:20px;font-family:'Space Mono',monospace;
+  box-shadow:0 2px 12px rgba(245,158,11,0.4);
+}
+
+/* Plan name */
+.plan-name{
+  font-family:'Space Mono',monospace;font-size:10px;font-weight:700;
+  letter-spacing:0.16em;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.plan-free .plan-name{color:var(--text2)}
+.plan-collector .plan-name{color:var(--lavender)}
+.plan-master .plan-name{color:var(--gold2)}
+
+/* Price */
+.plan-price{
+  display:flex;align-items:baseline;gap:4px;
+  margin-bottom:6px;
+}
+.plan-price-amount{
+  font-family:'Bebas Neue',sans-serif;font-size:64px;line-height:1;
+  letter-spacing:0.02em;color:#fff;
+}
+.plan-price-currency{
+  font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--text2);
+  align-self:flex-start;margin-top:12px;
+}
+.plan-price-period{
+  font-size:13px;color:var(--muted);font-weight:400;
+}
+.plan-price-annual{
+  font-size:11px;color:var(--muted);margin-bottom:20px;min-height:18px;
+}
+.plan-price-annual span{color:var(--green)}
+
+/* Divider */
+.plan-div{height:1px;background:var(--border);margin:20px 0}
+
+/* Description */
+.plan-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px;font-weight:300}
+
+/* CTA */
+.plan-cta{
+  width:100%;padding:12px;border-radius:10px;
+  font-size:13px;font-weight:700;font-family:inherit;
+  cursor:pointer;transition:all 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  text-decoration:none;margin-bottom:28px;
+}
+.plan-free .plan-cta{
+  background:transparent;border:1px solid var(--border2);color:var(--text2);
+}
+.plan-free .plan-cta:hover{border-color:rgba(255,255,255,0.18);color:var(--text)}
+
+.plan-collector .plan-cta{
+  background:linear-gradient(135deg,var(--violet),var(--violet2));
+  border:1px solid var(--violet-hi);color:#fff;
+  box-shadow:0 4px 20px rgba(124,58,237,0.35);
+}
+.plan-collector .plan-cta:hover{box-shadow:0 6px 28px rgba(124,58,237,0.55);transform:translateY(-1px)}
+
+.plan-master .plan-cta{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border:1px solid rgba(251,191,36,0.6);color:#000;
+  box-shadow:0 4px 20px rgba(245,158,11,0.3);
+}
+.plan-master .plan-cta:hover{box-shadow:0 6px 28px rgba(245,158,11,0.45);transform:translateY(-1px)}
+
+/* Features */
+.plan-features{display:flex;flex-direction:column;gap:10px}
+.feat{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text2);font-weight:400}
+.feat-icon{
+  width:18px;height:18px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;margin-top:1px;
+}
+.feat-icon.yes{background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.25)}
+.feat-icon.yes svg{color:var(--green)}
+.feat-icon.no{background:rgba(255,255,255,0.03);border:1px solid var(--border)}
+.feat-icon.no svg{color:var(--muted)}
+.feat-text{}
+.feat-text strong{color:var(--text);font-weight:600}
+.feat-highlight{
+  font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+  font-family:'Space Mono',monospace;padding:2px 6px;border-radius:4px;margin-left:4px;
+}
+.feat-highlight.violet{color:var(--lavender);background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.2)}
+.feat-highlight.gold{color:var(--gold2);background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2)}
+.feat-divider{height:1px;background:var(--border);margin:4px 0}
+
+/* ── FAQ ── */
+.faq{margin-top:100px;max-width:680px;margin-left:auto;margin-right:auto;animation:fade-up 0.4s 0.3s ease both}
+.faq-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:0.04em;color:#fff;text-align:center;margin-bottom:40px}
+.faq-item{border-bottom:1px solid var(--border);padding:20px 0;cursor:pointer}
+.faq-item:first-of-type{border-top:1px solid var(--border)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.faq-q-text{font-size:14px;font-weight:600;color:var(--text)}
+.faq-arrow{color:var(--muted);transition:transform 0.2s;flex-shrink:0}
+.faq-item.open .faq-arrow{transform:rotate(45deg);color:var(--lavender)}
+.faq-a{font-size:13px;color:var(--text2);line-height:1.7;max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;font-weight:300}
+.faq-item.open .faq-a{max-height:200px;padding-top:12px}
+
+/* ── BOTTOM CTA ── */
+.bottom-cta{
+  text-align:center;margin-top:100px;padding:60px 40px;
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:24px;position:relative;overflow:hidden;
+  animation:fade-up 0.4s 0.36s ease both;
+}
+.bottom-cta::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(124,58,237,0.5),rgba(196,181,253,0.4),transparent);
+}
+.bottom-cta-orb{
+  position:absolute;top:-40px;left:50%;transform:translateX(-50%);
+  width:400px;height:200px;
+  background:radial-gradient(ellipse,rgba(124,58,237,0.1) 0%,transparent 65%);
+  filter:blur(40px);pointer-events:none;
+}
+.bottom-cta-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,4vw,52px);letter-spacing:0.03em;color:#fff;margin-bottom:12px;position:relative}
+.bottom-cta-sub{font-size:14px;color:var(--text2);margin-bottom:28px;font-weight:300;position:relative}
+.bottom-cta-btns{display:flex;gap:12px;justify-content:center;position:relative;flex-wrap:wrap}
+
+@keyframes fade-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── MOBILE ── */
+@media(max-width:900px){
+  .plans{grid-template-columns:1fr;max-width:440px;margin:0 auto}
+}
+@media(max-width:768px){
+  .nav-inner{padding:0 16px}
+  .nav-links,.nav-right .btn-ghost{display:none}
+  .page{padding:48px 16px 80px}
+  .hero{margin-bottom:48px}
+  .hero-sub{font-size:14px}
+  .bottom-cta{padding:40px 20px;border-radius:16px}
+  .faq{margin-top:64px}
+}
+</style>
+</head>
+<body>
+
+<div class="grid-floor"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="homepage-f.html" class="logo">
+      <div class="logo-mark">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </div>
+      <div class="logo-divider"></div>
+      <div class="logo-text">
+        <span class="logo-title">CoastiesBinder</span>
+        <span class="logo-sub">Pokémon Tracker</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="homepage-f.html">Home</a>
+      <a href="coasties-binder-mybinders.html">My Binders</a>
+      <a href="#">Browse Sets</a>
+      <a href="#" class="active">Plans</a>
+    </div>
+    <div class="nav-right">
+      <a href="coasties-binder-login.html" class="btn-ghost">Log in</a>
+      <a href="coasties-binder-login.html" class="btn-violet">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Pricing</div>
+    <h1 class="hero-title">Pick your<br><span>level.</span></h1>
+    <p class="hero-sub">Start free. Upgrade when your collection demands it. No surprises, no ads, no nonsense.</p>
+
+    <!-- Billing toggle -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:0">
+      <div class="billing-toggle">
+        <button class="bt-btn active" onclick="setBilling('monthly',this)">Monthly</button>
+        <button class="bt-btn" onclick="setBilling('annual',this)">Annual <span class="save-badge">Save 20%</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLANS -->
+  <div class="plans">
+
+    <!-- FREE -->
+    <div class="plan plan-free">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">
+        <span class="plan-price-currency">£</span>
+        <span class="plan-price-amount">0</span>
+      </div>
+      <div class="plan-price-annual">&nbsp;</div>
+      <p class="plan-desc">Everything you need to start tracking your first set. No credit card needed, ever.</p>
+      <div class="plan-div"></div>
+      <a href="coasties-binder-login.html" class="plan-cta">Get started free</a>
+      <div class="plan-features">
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text"><strong>1 binder</strong> — one set tracked at a time</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text">Browse all <strong>180+ sets</strong></div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text">Mark cards as owned or missing</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text">Rarity tabs &amp; binder view modes</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text">Completion progress tracking</div>
+        </div>
+        <div class="feat-divider"></div>
+        <div class="feat">
+          <div class="feat-icon no"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+          <div class="feat-text" style="color:var(--muted)">Multiple binders</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon no"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+          <div class="feat-text" style="color:var(--muted)">Favourites &amp; custom sorting</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon no"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+          <div class="feat-text" style="color:var(--muted)">Cloud sync &amp; backup</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLLECTOR -->
+    <div class="plan plan-collector">
+      <div class="popular-badge">Most popular</div>
+      <div class="plan-name">Collector</div>
+      <div class="plan-price">
+        <span class="plan-price-currency">£</span>
+        <span class="plan-price-amount" id="collector-price">3</span>
+        <span class="plan-price-period">/mo</span>
+      </div>
+      <div class="plan-price-annual" id="collector-annual">&nbsp;</div>
+      <p class="plan-desc">For the serious collector juggling multiple sets. Unlimited binders, favourites, and everything synced across your devices.</p>
+      <div class="plan-div"></div>
+      <a href="coasties-binder-login.html" class="plan-cta">
+        Start collecting
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <div class="plan-features">
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text"><strong>Unlimited binders</strong> <span class="feat-highlight violet">Upgrade</span></div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text">Everything in Free</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text"><strong>Favourites</strong> — pin your most-wanted sets</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text"><strong>Cloud sync</strong> — access on any device</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text">Custom binder sorting &amp; filters</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text">Export collection as CSV</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text">Collection stats dashboard</div>
+        </div>
+        <div class="feat-divider"></div>
+        <div class="feat">
+          <div class="feat-icon no"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+          <div class="feat-text" style="color:var(--muted)">Trade wishlist</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon no"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+          <div class="feat-text" style="color:var(--muted)">Exclusive Master themes</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MASTER -->
+    <div class="plan plan-master">
+      <div class="master-badge">⭐ Master</div>
+      <div class="plan-name">Master</div>
+      <div class="plan-price">
+        <span class="plan-price-currency">£</span>
+        <span class="plan-price-amount" id="master-price">7</span>
+        <span class="plan-price-period">/mo</span>
+      </div>
+      <div class="plan-price-annual" id="master-annual">&nbsp;</div>
+      <p class="plan-desc">The complete Coasties experience. Built for trainers who take completing the set very seriously.</p>
+      <div class="plan-div"></div>
+      <a href="coasties-binder-login.html" class="plan-cta">
+        Become a master
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <div class="plan-features">
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text"><strong>Everything in Collector</strong></div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text"><strong>Trade wishlist</strong> — track cards you need <span class="feat-highlight gold">Master</span></div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text"><strong>Exclusive binder themes</strong> <span class="feat-highlight gold">Master</span></div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text"><strong>Early access</strong> to upcoming sets <span class="feat-highlight gold">Master</span></div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text">Card <strong>condition notes</strong> per card</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text">Shareable public binder links</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon yes"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="feat-text">Priority support</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /plans -->
+
+  <!-- FAQ -->
+  <div class="faq">
+    <div class="faq-title">Questions</div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        <span class="faq-q-text">Can I switch plans at any time?</span>
+        <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="faq-a">Yes — upgrade or downgrade anytime. If you upgrade mid-cycle you'll only be charged the difference. If you downgrade, the change takes effect at the end of your billing period.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        <span class="faq-q-text">What happens to my binders if I downgrade to Free?</span>
+        <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="faq-a">Your data is never deleted. If you downgrade to Free, your extra binders become read-only until you resubscribe. Your first binder stays fully active.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        <span class="faq-q-text">Is there a free trial for paid plans?</span>
+        <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="faq-a">Yes — both Collector and Master come with a 14-day free trial. No credit card required to start. We'll remind you 3 days before the trial ends.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        <span class="faq-q-text">What does "early access to upcoming sets" mean?</span>
+        <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="faq-a">Master members get new sets added to CoastiesBinder as soon as card data is available — typically weeks before the official release date. You can start planning your collection and marking wishlist cards before the set even drops.</div>
+    </div>
+  </div>
+
+  <!-- BOTTOM CTA -->
+  <div class="bottom-cta">
+    <div class="bottom-cta-orb"></div>
+    <div class="bottom-cta-title">Start for free today</div>
+    <p class="bottom-cta-sub">No credit card needed. Upgrade whenever you're ready.</p>
+    <div class="bottom-cta-btns">
+      <a href="coasties-binder-login.html" class="btn-violet" style="padding:12px 28px;font-size:14px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Create free account
+      </a>
+      <a href="coasties-binder-mybinders.html" class="btn-ghost" style="padding:12px 28px;font-size:14px">View demo →</a>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+let billing = 'monthly';
+
+const prices = {
+  collector: { monthly: 3, annual: 2.40 },
+  master:    { monthly: 7, annual: 5.60 }
+};
+
+function setBilling(mode, btn){
+  billing = mode;
+  document.querySelectorAll('.bt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Update prices
+  ['collector','master'].forEach(plan => {
+    const p = prices[plan][mode];
+    document.getElementById(plan+'-price').textContent = p.toFixed(p % 1 === 0 ? 0 : 2);
+    const annualEl = document.getElementById(plan+'-annual');
+    if(mode === 'annual'){
+      annualEl.innerHTML = `<span>£${(p * 12).toFixed(0)} billed annually</span>`;
+    } else {
+      annualEl.innerHTML = '&nbsp;';
+    }
+  });
+}
+
+function toggleFaq(el){
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if(!isOpen) el.classList.add('open');
+}
+</script>
+</body>
+</html>
