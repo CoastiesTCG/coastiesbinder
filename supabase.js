@@ -1,9 +1,17 @@
 // ── CoastiesBinder Shared Auth ──
-// Hide nav auth elements instantly to prevent flash
-const _style = document.createElement('style');
-_style.id = 'sb-preload';
-_style.textContent = '#navLogin,#navSignup,#navSignout,#navUser{visibility:hidden}';
-document.head.appendChild(_style);
+// Instantly apply auth state from cookie before session check
+// This prevents any flash of wrong nav state
+(function() {
+  const isLoggedIn = document.cookie.includes('sb-logged-in=1');
+  const style = document.createElement('style');
+  if (isLoggedIn) {
+    style.textContent = '#navLogin,#navSignup{display:none!important}';
+  } else {
+    style.textContent = '#navSignout,#navUser{display:none!important}';
+  }
+  style.id = 'sb-preload';
+  document.head.appendChild(style);
+})();
 
 const SUPA_URL = 'https://czkzlkfnwsvsfpxjpscs.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6a3psa2Zud3N2c2ZweGpwc2NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3ODA3OTEsImV4cCI6MjA5MDM1Njc5MX0.PJqknz3zikYq65y0ekb1EFmDwda8DRU8SUFSK3c_yDU';
@@ -17,7 +25,13 @@ const AUTH_PAGES = ['login.html'];
 const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
 function updateNav(user) {
-  // Reveal nav auth elements now that we know the state
+  // Update cookie to match real auth state (for instant nav on next page load)
+  if (user) {
+    document.cookie = 'sb-logged-in=1;path=/;max-age=604800';
+  } else {
+    document.cookie = 'sb-logged-in=;path=/;max-age=0';
+  }
+  // Remove preload style and let real state show
   const preload = document.getElementById('sb-preload');
   if (preload) preload.remove();
   const navLogin   = document.getElementById('navLogin');
