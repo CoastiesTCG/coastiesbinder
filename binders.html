@@ -815,12 +815,12 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;over
 }
 </style>
 </head>
-<body>
+<body style="opacity:0;transition:opacity 0.15s">
 
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-inner">
-    <a href="index.html" class="logo">
+    <a href="coasties-binder-index.html" class="logo">
       <div class="logo-mark">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
       </div>
@@ -835,14 +835,14 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;over
       <input type="text" placeholder="Search cards, sets..." id="searchInput">
     </div>
     <div class="nav-links">
-      <a href="index.html">Home</a>
+      <a href="coasties-binder-index.html">Home</a>
       <a href="#" class="active">My Binders</a>
       <a href="#">Browse Sets</a>
       <a href="#">Shop ↗</a>
     </div>
     <div class="nav-right">
-      <a href="login.html" class="btn-ghost" id="navLogin">Log in</a>
-      <a href="login.html" class="btn-violet" id="navSignup">Get started</a>
+      <a href="coasties-binder-auth.html" class="btn-ghost" id="navLogin">Log in</a>
+      <a href="coasties-binder-auth.html" class="btn-violet" id="navSignup">Get started</a>
       <button class="btn-ghost" id="navSignout" style="display:none" onclick="signOut()">Sign out</button>
       <div id="navUser" style="display:none;font-size:12px;color:var(--text2);padding:6px 10px;background:rgba(255,255,255,0.05);border-radius:7px;border:1px solid var(--border)"></div>
       <a href="https://coastiescollectibles.com" class="nav-icon" title="Shop">
@@ -858,7 +858,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;over
 <!-- Mobile menu popup -->
 <div class="menu-backdrop" id="menuBackdrop" onclick="closeMenu()"></div>
 <div class="mobile-menu" id="mobileMenu">
-  <a href="index.html" class="mobile-menu-item">
+  <a href="coasties-binder-index.html" class="mobile-menu-item">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
     Home
   </a>
@@ -1211,8 +1211,8 @@ function renderBinders(){
     card.dataset.id = b.id;
     card.dataset.fav = b.fav ? '1' : '0';
     card.href = b.setId === 'me03'
-      ? 'setview-me03.html'
-      : `setview.html?set=${b.setId}`;
+      ? 'coasties-binder-setview-me03.html'
+      : `coasties-binder-setview.html?set=${b.setId}`;
     card.innerHTML = `
       <div class="binder-cover" style="background:${set.grad}">
         <div style="position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 80% 70% at 50% 55%,${set.color}30,transparent 70%);pointer-events:none"></div>
@@ -1404,7 +1404,7 @@ async function createBinder(){
   }
   if(!currentUser){
     // Not logged in — redirect to auth
-    window.location.href = 'login.html';
+    window.location.href = 'coasties-binder-auth.html';
     return;
   }
   const { data, error } = await sb.from('binders').insert({
@@ -1586,10 +1586,6 @@ async function signOut() {
 // Boot
 (async () => {
   const { data: { session } } = await sb.auth.getSession();
-  if (!session) {
-    window.location.href = 'login.html';
-    return;
-  }
   currentUser = session?.user || null;
   updateNavAuth(currentUser);
   await loadBinders();

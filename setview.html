@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CoastiesBinder — Set Viewer</title>
+<title>CoastiesBinder — Paradox Rift</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -431,11 +432,11 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;over
 .ttxt{font-size:12px;color:var(--text);font-weight:500}
 </style>
 </head>
-<body>
+<body style="opacity:0;transition:opacity 0.15s">
 
 <nav class="nav">
   <div class="nav-inner">
-    <a href="#" class="logo">
+    <a href="index.html" class="logo">
       <div class="logo-mark">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
       </div>
@@ -450,7 +451,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;over
       <input type="text" placeholder="Search cards, sets...">
     </div>
     <div class="nav-links">
-      <a href="#">My Binders</a>
+      <a href="binders.html">My Binders</a>
       <a href="#" class="active" id="nav-setname">Paradox Rift</a>
       <a href="#">Browse Sets</a>
       <a href="#">Shop ↗</a>
@@ -469,7 +470,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;over
 <div class="set-header">
   <div class="shbg"></div>
   <div class="shi">
-    <a href="#" class="back-btn">
+    <a href="binders.html" class="back-btn">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       Binders
     </a>
@@ -561,6 +562,13 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;over
 </div>
 
 <script>
+// ── Supabase ──
+const SUPA_URL = 'https://czkzlkfnwsvsfpxjpscs.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6a3psa2Zud3N2c2ZweGpwc2NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3ODA3OTEsImV4cCI6MjA5MDM1Njc5MX0.PJqknz3zikYq65y0ekb1EFmDwda8DRU8SUFSK3c_yDU';
+const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+let currentUser = null;
+let currentBinderId = null;
+
 const BASE   = 'https://api.tcgdex.net/v2/en';
 const SET_ID = new URLSearchParams(window.location.search).get('set') || 'sv04';
 const PTCGIO = 'https://api.pokemontcg.io/v2';
@@ -582,7 +590,7 @@ function rarityClassPtcgio(rarity) {
 }
 
 let ALL    = [];
-let owned  = new Set();
+let owned  = new Set();  // card IDs owned by this user for this binder
 let filter = 'all';
 let pocket = 9;
 let spread = 0;
@@ -659,9 +667,6 @@ async function init() {
       imgUrl:  null, // use image + /high.webp
     }));
 
-    const toOwn = Math.floor(ALL.length * 0.60);
-    [...ALL].sort(() => Math.random() - 0.5).slice(0, toOwn).forEach(c => owned.add(c.id));
-
     const seriesName = setData.serie?.name || '';
     function formatDate(d) {
       if (!d) return '';
@@ -723,9 +728,6 @@ async function initFromPtcgio(ptcgioId) {
       image:   null, // use imgUrl directly
       imgUrl:  c.images?.large || c.images?.small || '',
     }));
-
-    const toOwn = Math.floor(ALL.length * 0.60);
-    [...ALL].sort(() => Math.random() - 0.5).slice(0, toOwn).forEach(c => owned.add(c.id));
 
     // Fetch set metadata for header
     const setRes  = await fetch(`${PTCGIO}/sets/${ptcgioId}`);
@@ -862,9 +864,27 @@ function renderPage(id, cards, ps) {
   });
 }
 
-function toggle(id, name) {
-  if (owned.has(id)) { owned.delete(id); showToast('Removed · ' + name, 'r'); }
-  else               { owned.add(id);    showToast('Added · '   + name, 'a'); }
+async function toggle(id, name) {
+  if (owned.has(id)) {
+    owned.delete(id);
+    showToast('Removed · ' + name, 'r');
+    if (currentUser && currentBinderId) {
+      await sb.from('owned_cards')
+        .delete()
+        .eq('binder_id', currentBinderId)
+        .eq('card_id', id);
+    }
+  } else {
+    owned.add(id);
+    showToast('Added · ' + name, 'a');
+    if (currentUser && currentBinderId) {
+      await sb.from('owned_cards')
+        .upsert({ user_id: currentUser.id, binder_id: currentBinderId, card_id: id },
+                { onConflict: 'binder_id,card_id' });
+      // Update binder updated_at
+      await sb.from('binders').update({ updated_at: new Date().toISOString() }).eq('id', currentBinderId);
+    }
+  }
   stats(); renderAll();
 }
 
@@ -908,12 +928,7 @@ function setPocket(p) {
   renderAll();
 }
 
-document.getElementById('markAllBtn').addEventListener('click', () => {
-  const allOwned = ALL.every(c => owned.has(c.id));
-  if (allOwned) { owned.clear(); showToast('Cleared all', 'r'); }
-  else          { ALL.forEach(c => owned.add(c.id)); showToast('Marked all owned!', 'a'); }
-  stats(); renderAll();
-});
+// markAllBtn wired in boot sequence below
 
 // Update mark all button text based on state
 function updateMarkAllBtn() {
@@ -948,7 +963,69 @@ function setBinder(name) {
   });
 }
 
-init();
+// ── Supabase Boot ──
+async function loadOwnedCards() {
+  if (!currentUser || !currentBinderId) return;
+  const { data, error } = await sb
+    .from('owned_cards')
+    .select('card_id')
+    .eq('binder_id', currentBinderId);
+  if (!error && data) {
+    owned = new Set(data.map(r => r.card_id));
+  }
+}
+
+async function markAllOwned() {
+  const allOwned = ALL.every(c => owned.has(c.id));
+  if (allOwned) {
+    owned.clear();
+    showToast('Cleared all', 'r');
+    if (currentUser && currentBinderId) {
+      await sb.from('owned_cards').delete().eq('binder_id', currentBinderId);
+      await sb.from('binders').update({ updated_at: new Date().toISOString() }).eq('id', currentBinderId);
+    }
+  } else {
+    ALL.forEach(c => owned.add(c.id));
+    showToast('Marked all owned!', 'a');
+    if (currentUser && currentBinderId) {
+      const rows = ALL.map(c => ({ user_id: currentUser.id, binder_id: currentBinderId, card_id: c.id }));
+      // Insert in batches of 100
+      for (let i = 0; i < rows.length; i += 100) {
+        await sb.from('owned_cards').upsert(rows.slice(i, i + 100), { onConflict: 'binder_id,card_id' });
+      }
+      await sb.from('binders').update({ updated_at: new Date().toISOString() }).eq('id', currentBinderId);
+    }
+  }
+  stats(); renderAll();
+}
+
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    window.location.href = 'login.html';
+    return;
+  }
+  currentUser = session.user;
+  document.body.style.opacity = '1';
+
+  // Find this user's binder for this set
+  const { data: binders } = await sb
+    .from('binders')
+    .select('id')
+    .eq('user_id', currentUser.id)
+    .eq('set_id', SET_ID)
+    .single();
+
+  if (binders) {
+    currentBinderId = binders.id;
+    await loadOwnedCards();
+  }
+
+  init();
+})();
+
+// Wire mark all button to Supabase version
+document.getElementById('markAllBtn').addEventListener('click', markAllOwned);
 </script>
 </body>
 </html>

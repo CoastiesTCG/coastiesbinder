@@ -3,7 +3,11 @@ const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
 sb.auth.getSession().then(({ data }) => {
-  if (data.session) window.location.href = 'binders.html';
+  if (data.session) {
+    window.location.href = 'binders.html';
+  } else {
+    document.body.style.opacity = '1';
+  }
 });
 
 function switchTab(tab) {
