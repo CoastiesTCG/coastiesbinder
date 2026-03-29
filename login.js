@@ -1,36 +1,24 @@
-const SUPA_URL = 'https://czkzlkfnwsvsfpxjpscs.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6a3psa2Zud3N2c2ZweGpwc2NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3ODA3OTEsImV4cCI6MjA5MDM1Njc5MX0.PJqknz3zikYq65y0ekb1EFmDwda8DRU8SUFSK3c_yDU';
-const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-
-sb.auth.getSession().then(({ data }) => {
-  if (data.session) {
-    window.location.href = 'binders.html';
-  } else {
-    document.body.style.opacity = '1';
-  }
-});
+// Login page logic — supabase.js already handles redirect if logged in
 
 function switchTab(tab) {
   const isLogin = tab === 'login';
-  document.getElementById('loginForm').style.display = isLogin ? '' : 'none';
+  document.getElementById('loginForm').style.display  = isLogin ? '' : 'none';
   document.getElementById('signupForm').style.display = isLogin ? 'none' : '';
-  document.getElementById('formTitle').textContent = isLogin ? 'Welcome Back' : 'Create Account';
+  document.getElementById('formTitle').textContent    = isLogin ? 'Welcome Back' : 'Create Account';
   document.getElementById('formSubtitle').textContent = isLogin ? 'Sign in to access your binders' : 'Start tracking your collection';
   document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', isLogin ? i === 0 : i === 1));
   clearMessages();
 }
 
 function showError(msg) {
-  const el = document.getElementById('errorMsg');
-  el.textContent = msg;
-  el.classList.add('show');
+  document.getElementById('errorMsg').textContent = msg;
+  document.getElementById('errorMsg').classList.add('show');
   document.getElementById('successMsg').classList.remove('show');
 }
 
 function showSuccess(msg) {
-  const el = document.getElementById('successMsg');
-  el.textContent = msg;
-  el.classList.add('show');
+  document.getElementById('successMsg').textContent = msg;
+  document.getElementById('successMsg').classList.add('show');
   document.getElementById('errorMsg').classList.remove('show');
 }
 
@@ -40,7 +28,7 @@ function clearMessages() {
 }
 
 async function login() {
-  const email = document.getElementById('loginEmail').value.trim();
+  const email    = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
   if (!email || !password) { showError('Please fill in all fields'); return; }
   const btn = document.getElementById('loginBtn');
@@ -51,9 +39,9 @@ async function login() {
 }
 
 async function signup() {
-  const email = document.getElementById('signupEmail').value.trim();
+  const email    = document.getElementById('signupEmail').value.trim();
   const password = document.getElementById('signupPassword').value;
-  const confirm = document.getElementById('signupConfirm').value;
+  const confirm  = document.getElementById('signupConfirm').value;
   if (!email || !password || !confirm) { showError('Please fill in all fields'); return; }
   if (password.length < 8) { showError('Password must be at least 8 characters'); return; }
   if (password !== confirm) { showError('Passwords do not match'); return; }
@@ -65,14 +53,18 @@ async function signup() {
   btn.disabled = false; btn.textContent = 'Create Account';
 }
 
-// Wire up buttons — DOM is ready since script is at end of body
-document.querySelectorAll('[data-tab]').forEach(btn => {
-  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-});
-document.getElementById('loginBtn').addEventListener('click', login);
-document.getElementById('signupBtn').addEventListener('click', signup);
-document.addEventListener('keydown', e => {
-  if (e.key !== 'Enter') return;
-  if (document.getElementById('loginForm').style.display !== 'none') login();
-  else signup();
+// Wire buttons after DOM ready — wait for supabase.js boot first
+window._sbReady.then(() => {
+  document.getElementById('loginBtn').addEventListener('click', login);
+  document.getElementById('signupBtn').addEventListener('click', signup);
+  document.querySelectorAll('[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    if (document.getElementById('loginForm').style.display !== 'none') login();
+    else signup();
+  });
+  // Show page — only reached if not already logged in
+  document.body.style.opacity = '1';
 });

@@ -6,7 +6,6 @@
 <title>CoastiesBinder — My Binders</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -815,7 +814,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;over
 }
 </style>
 </head>
-<body style="opacity:0;transition:opacity 0.15s">
+<body style="opacity:0">
 
 <!-- NAV -->
 <nav class="nav">
@@ -1102,10 +1101,7 @@ const SETS = [
 function logoUrl(set){ return `https://assets.tcgdex.net/en/${set.serie}/${set.id}/logo.webp` }
 function symbolUrl(set){ return `https://assets.tcgdex.net/univ/${set.serie}/${set.id}/symbol.webp` }
 
-// ── Supabase ──
-const SUPA_URL = 'https://czkzlkfnwsvsfpxjpscs.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6a3psa2Zud3N2c2ZweGpwc2NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3ODA3OTEsImV4cCI6MjA5MDM1Njc5MX0.PJqknz3zikYq65y0ekb1EFmDwda8DRU8SUFSK3c_yDU';
-const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+// sb and currentUser come from supabase.js
 let currentUser = null;
 
 let binders = [];
@@ -1558,48 +1554,18 @@ function timeAgo(ts) {
   return new Date(ts).toLocaleDateString();
 }
 
-function updateNavAuth(user) {
-  const login = document.getElementById('navLogin');
-  const signup = document.getElementById('navSignup');
-  const signout = document.getElementById('navSignout');
-  const navUser = document.getElementById('navUser');
-  if (user) {
-    if (login) login.style.display = 'none';
-    if (signup) signup.style.display = 'none';
-    if (signout) signout.style.display = '';
-    if (navUser) { navUser.style.display = ''; navUser.textContent = user.email.split('@')[0]; }
-  } else {
-    if (login) login.style.display = '';
-    if (signup) signup.style.display = '';
-    if (signout) signout.style.display = 'none';
-    if (navUser) navUser.style.display = 'none';
-  }
-}
-
-async function signOut() {
-  await sb.auth.signOut();
-  currentUser = null;
-  binders = [];
-  updateNavAuth(null);
-  renderBinders();
-}
+// nav auth handled by supabase.js
 
 // Wire signout button
-document.getElementById('navSignout').addEventListener('click', signOut);
-
-// Boot
-(async () => {
-  const { data: { session } } = await sb.auth.getSession();
-  currentUser = session?.user || null;
-  updateNavAuth(currentUser);
+// Boot — wait for shared supabase.js auth check
+window._sbReady.then(async (user) => {
+  if (!user) return; // supabase.js already redirected to login
+  currentUser = user;
   await loadBinders();
-})();
-
-sb.auth.onAuthStateChange((_event, session) => {
-  currentUser = session?.user || null;
-  updateNavAuth(currentUser);
-  loadBinders();
+  document.body.style.opacity = '1';
 });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
 </body>
 </html>

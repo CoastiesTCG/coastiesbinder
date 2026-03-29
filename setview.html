@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CoastiesBinder — Paradox Rift</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -432,7 +431,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;over
 .ttxt{font-size:12px;color:var(--text);font-weight:500}
 </style>
 </head>
-<body style="opacity:0;transition:opacity 0.15s">
+<body style="opacity:0">
 
 <nav class="nav">
   <div class="nav-inner">
@@ -562,10 +561,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;over
 </div>
 
 <script>
-// ── Supabase ──
-const SUPA_URL = 'https://czkzlkfnwsvsfpxjpscs.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6a3psa2Zud3N2c2ZweGpwc2NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3ODA3OTEsImV4cCI6MjA5MDM1Njc5MX0.PJqknz3zikYq65y0ekb1EFmDwda8DRU8SUFSK3c_yDU';
-const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+// sb comes from supabase.js
 let currentUser = null;
 let currentBinderId = null;
 
@@ -999,13 +995,10 @@ async function markAllOwned() {
   stats(); renderAll();
 }
 
-(async () => {
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) {
-    window.location.href = 'login.html';
-    return;
-  }
-  currentUser = session.user;
+// Boot — wait for shared supabase.js auth check
+window._sbReady.then(async (user) => {
+  if (!user) return; // supabase.js already redirected to login
+  currentUser = user;
 
   // Find this user's binder for this set
   const { data: binderData } = await sb
@@ -1022,10 +1015,12 @@ async function markAllOwned() {
 
   await init();
   document.body.style.opacity = '1';
-})();
+});
 
 // Wire mark all button to Supabase version
 document.getElementById('markAllBtn').addEventListener('click', markAllOwned);
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
 </body>
 </html>
