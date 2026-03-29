@@ -1,5 +1,4 @@
 // ── CoastiesBinder Shared Auth ──
-// Nav preload handled inline in each HTML file
 
 const SUPA_URL = 'https://czkzlkfnwsvsfpxjpscs.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6a3psa2Zud3N2c2ZweGpwc2NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3ODA3OTEsImV4cCI6MjA5MDM1Njc5MX0.PJqknz3zikYq65y0ekb1EFmDwda8DRU8SUFSK3c_yDU';

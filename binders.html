@@ -2,15 +2,13 @@
 <html lang="en">
 <head>
 <script>
-// Instant nav auth — no flash
 (function(){
-  var c = document.cookie.indexOf('sb-logged-in=1') > -1;
-  var s = document.createElement('style');
-  s.textContent = c
-    ? '#navLogin,#navSignup{display:none!important}'
-    : '#navSignout,#navUser{display:none!important}';
+  var s=document.createElement('style');
+  s.id='sb-flash';
+  // Hide ALL auth nav elements instantly - show correct ones after JS runs
+  s.textContent='#navLogin,#navSignup,#navSignout,#navUser{opacity:0;pointer-events:none}';
   document.head.appendChild(s);
-  window._navPreload = s;
+  window._navFlash=s;
 })();
 </script>
 <meta charset="UTF-8">
