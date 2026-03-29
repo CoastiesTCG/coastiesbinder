@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoastiesBinder — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#020209;--surface:#0d0d1a;--surface2:#12121f;--border:rgba(255,255,255,0.08);
+    --violet:#7c3aed;--violet2:#6d28d9;--text:#e2e8f0;--text2:#94a3b8;--muted:#475569;
+    --green:#22c55e;--red:#ef4444;
+  }
+  body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:420px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(124,58,237,0.15),transparent 70%);pointer-events:none}
+  .logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;justify-content:center;text-decoration:none}
+  .logo-mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--violet),var(--violet2));display:flex;align-items:center;justify-content:center}
+  .logo-mark svg{width:18px;height:18px;color:#fff}
+  .logo-text{display:flex;flex-direction:column;line-height:1;gap:2px}
+  .logo-title{font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;letter-spacing:0.04em}
+  .logo-sub{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase}
+  h1{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.04em;text-align:center;margin-bottom:6px}
+  .subtitle{font-size:14px;color:var(--text2);text-align:center;margin-bottom:28px}
+  .tabs{display:flex;background:var(--surface2);border-radius:8px;padding:3px;margin-bottom:24px;gap:3px}
+  .tab{flex:1;padding:8px;border:none;background:transparent;color:var(--text2);font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;border-radius:6px;cursor:pointer;transition:all 0.2s}
+  .tab.active{background:var(--violet);color:#fff}
+  .field{margin-bottom:16px}
+  label{display:block;font-size:11px;font-weight:600;color:var(--text2);letter-spacing:0.04em;margin-bottom:6px;text-transform:uppercase}
+  input{width:100%;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s}
+  input:focus{border-color:rgba(124,58,237,0.5)}
+  input::placeholder{color:var(--muted)}
+  .btn{width:100%;padding:12px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--violet),var(--violet2));color:#fff;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px;transition:opacity 0.2s}
+  .btn:hover{opacity:0.9}
+  .btn:disabled{opacity:0.5;cursor:not-allowed}
+  .error{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:10px 14px;font-size:13px;color:#fca5a5;margin-bottom:16px;display:none}
+  .error.show{display:block}
+  .success{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:8px;padding:10px 14px;font-size:13px;color:#86efac;margin-bottom:16px;display:none}
+  .success.show{display:block}
+  .divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted);font-size:12px}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+  .back-link{display:block;text-align:center;margin-top:20px;color:var(--text2);font-size:13px;text-decoration:none}
+  .back-link:hover{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="card">
+  <a href="coasties-binder-index.html" class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    </div>
+    <div class="logo-text">
+      <span class="logo-title">CoastiesBinder</span>
+      <span class="logo-sub">Pokémon Tracker</span>
+    </div>
+  </a>
+
+  <h1 id="formTitle">Welcome Back</h1>
+  <p class="subtitle" id="formSubtitle">Sign in to access your binders</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('login')">Sign In</button>
+    <button class="tab" onclick="switchTab('signup')">Sign Up</button>
+  </div>
+
+  <div class="error" id="errorMsg"></div>
+  <div class="success" id="successMsg"></div>
+
+  <!-- Login form -->
+  <div id="loginForm">
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn" onclick="login()" id="loginBtn">Sign In</button>
+  </div>
+
+  <!-- Signup form -->
+  <div id="signupForm" style="display:none">
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="signupPassword" placeholder="Min. 8 characters" autocomplete="new-password">
+    </div>
+    <div class="field">
+      <label>Confirm Password</label>
+      <input type="password" id="signupConfirm" placeholder="••••••••" autocomplete="new-password">
+    </div>
+    <button class="btn" onclick="signup()" id="signupBtn">Create Account</button>
+  </div>
+
+  <a href="coasties-binder-index.html" class="back-link">← Back to CoastiesBinder</a>
+</div>
+
+<script>
+const SUPA_URL = 'https://czkzlkfnwsvsfpxjpscs.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6a3psa2Zud3N2c2ZweGpwc2NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3ODA3OTEsImV4cCI6MjA5MDM1Njc5MX0.PJqknz3zikYq65y0ekb1EFmDwda8DRU8SUFSK3c_yDU';
+const supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+// Redirect if already logged in
+supabase.auth.getSession().then(({ data }) => {
+  if (data.session) window.location.href = 'coasties-binder-mybinders.html';
+});
+
+function switchTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('loginForm').style.display = isLogin ? '' : 'none';
+  document.getElementById('signupForm').style.display = isLogin ? 'none' : '';
+  document.getElementById('formTitle').textContent = isLogin ? 'Welcome Back' : 'Create Account';
+  document.getElementById('formSubtitle').textContent = isLogin ? 'Sign in to access your binders' : 'Start tracking your collection';
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', isLogin ? i===0 : i===1));
+  clearMessages();
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('show');
+  document.getElementById('successMsg').classList.remove('show');
+}
+
+function showSuccess(msg) {
+  const el = document.getElementById('successMsg');
+  el.textContent = msg;
+  el.classList.add('show');
+  document.getElementById('errorMsg').classList.remove('show');
+}
+
+function clearMessages() {
+  document.getElementById('errorMsg').classList.remove('show');
+  document.getElementById('successMsg').classList.remove('show');
+}
+
+async function login() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  if (!email || !password) { showError('Please fill in all fields'); return; }
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) { showError(error.message); btn.disabled = false; btn.textContent = 'Sign In'; return; }
+  window.location.href = 'coasties-binder-mybinders.html';
+}
+
+async function signup() {
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  const confirm = document.getElementById('signupConfirm').value;
+  if (!email || !password || !confirm) { showError('Please fill in all fields'); return; }
+  if (password.length < 8) { showError('Password must be at least 8 characters'); return; }
+  if (password !== confirm) { showError('Passwords do not match'); return; }
+  const btn = document.getElementById('signupBtn');
+  btn.disabled = true; btn.textContent = 'Creating account...';
+  const { error } = await supabase.auth.signUp({ email, password });
+  if (error) { showError(error.message); btn.disabled = false; btn.textContent = 'Create Account'; return; }
+  showSuccess('Account created! Check your email to confirm, then sign in.');
+  btn.disabled = false; btn.textContent = 'Create Account';
+}
+
+// Allow Enter key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    if (document.getElementById('loginForm').style.display !== 'none') login();
+    else signup();
+  }
+});
+</script>
+</body>
+</html>
